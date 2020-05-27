@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Сергей Новиков](https://up.htmlacademy.ru/javascript/20/user/1063711).
-* Наставник: `Неизвестно`.
+* Наставник: [Саяжан Онласын](https://htmlacademy.ru/profile/crepiks).
 
 ---
 
