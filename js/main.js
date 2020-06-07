@@ -15,13 +15,22 @@ var MIN_COMMENTS_COUNT = 1; // --- Минимальное количество �
 var MAX_COMMENTS_COUNT = 5; // --- Максимальное количество комментариев к фотографии ( может быть любым, я выбрал 5 )
 var DELETE_COUNT = 1; // --- Количество удаляемых элементов ( необходимо для метода ".splice()" )
 
-
 // *** 1.2) Переменные для DOM-элементов ***
+var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
+
 var PICTURE_TEMPLATE = document.querySelector('#picture') // --- Шаблон для вставки фотографий
                       .content
                       .querySelector('.picture');
 
 var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
+
+var BIG_PICTURE_CONTAINER = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
+var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
+
+var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Список комментариев
+var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
+var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
+var COMMENTS_ELEMENTS = COMMENTS.querySelectorAll('.social__comment'); // --- Элементы списка комментариев
 
 
 // *** 1.3) Массивы с данными (моки) ***
@@ -208,3 +217,52 @@ for (var j = 0; j < arrayOfPhotos.length; j++) {
 
 // --- Отрисовка фотографий на страницу ---
 PICTURES_CONTAINER.appendChild(fragment);
+
+
+// *** 3.5) Логика показа полноразмерной фотографии ***
+var getFullsizePicture = function (smallPicture) {
+  // --- Превью полноразмерной фотографии ---
+  var fullsizePicture = BIG_PICTURE;
+
+  // --- Заполнение полей превью данными из массива ---
+  fullsizePicture.querySelector('.big-picture__img').querySelector('img').src = smallPicture.url;
+  fullsizePicture.querySelector('.likes-count').textContent = smallPicture.likes;
+  fullsizePicture.querySelector('.social__caption').textContent = smallPicture.description;
+  fullsizePicture.querySelector('.comments-count').textContent = smallPicture.comments.length;
+
+  // --- Временное значение длины массива отображаемых комментариев ---
+  var temporaryCommentsLength = 2;
+
+  // --- Заполнение полей комментариев данными из массива комментариев ---
+  for (var i = 0; i < smallPicture.comments.length; i++) {
+    /*
+      Временное решение для корректного заполнения комментариев.
+      Если длина массива комментариев превышает настоящую длину
+      списка элементов в разметке, то происходит выход из цикла.
+    */
+    if (i >= temporaryCommentsLength) {
+      break;
+    } else {
+      COMMENTS_ELEMENTS[i].querySelector('.social__picture').src = smallPicture.comments[i].commentatorAvatar;
+      COMMENTS_ELEMENTS[i].querySelector('.social__picture').alt = smallPicture.comments[i].commentatorName;
+      COMMENTS_ELEMENTS[i].querySelector('.social__text').textContent = smallPicture.comments[i].commentatorMessage;
+    }
+  }
+
+  return fullsizePicture;
+};
+
+
+// --- Вызов функции показа полноразмерного изображения ---
+getFullsizePicture(arrayOfPhotos[ZERO_ELEMENT]);
+
+
+// --- Открытие скрытого по умолчанию блока ---
+BIG_PICTURE_CONTAINER.classList.remove('hidden');
+
+// --- Временное сокрытие блоков ---
+COMMENTS_COUNT.classList.add('hidden');
+COMMENTS_LOADER.classList.add('hidden');
+
+// --- Добавление <body> класса для отключения прокрутки страницы при открытом модальтном окне ---
+BODY.classList.add('modal-open');
