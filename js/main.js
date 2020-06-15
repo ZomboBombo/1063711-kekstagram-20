@@ -14,6 +14,8 @@ var MAX_LIKES_COUNT = 200; // --- Максимальное количество 
 var MIN_COMMENTS_COUNT = 1; // --- Минимальное количество комментариев к фотографии
 var MAX_COMMENTS_COUNT = 5; // --- Максимальное количество комментариев к фотографии ( может быть любым, я выбрал 5 )
 var DELETE_COUNT = 1; // --- Количество удаляемых элементов ( необходимо для метода ".splice()" )
+var ESC = 'Escape'; // --- Ключ для клавишы "Escape"
+var SEPARATOR = ' '; // --- Символ «пробел» — разделитель для метода "split()"
 
 // *** 1.2) Переменные для DOM-элементов ***
 var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
@@ -31,6 +33,13 @@ var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Списо
 var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
 var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
 var COMMENTS_ELEMENTS = COMMENTS.querySelectorAll('.social__comment'); // --- Элементы списка комментариев
+
+var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
+var UPLOAD_FILE = FORM_UPLOAD_IMAGE.querySelector('#upload-file'); // --- Контрол загрузки нового изображения
+var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
+var IMAGE_EDITING_FORM_EXIT = IMAGE_EDITING_FORM.querySelector('#upload-cancel'); // --- Кнопка закрытия окна редактирования изображения
+var FIELD_FOR_HASHTAGS = IMAGE_EDITING_FORM.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
+var SLIDER_HANDLE = IMAGE_EDITING_FORM.querySelector('.effect-level__pin'); // --- Ручка слайдера
 
 
 // *** 1.3) Массивы с данными (моки) ***
@@ -107,11 +116,13 @@ var getArrayOfNumbers = function (emptyArray, arrayLength) {
 };
 
 
-/* ***********************
-*** 3. ОСНОВНАЯ ЛОГИКА ***
-*********************** */
+/* ********************
+*** ОСНОВНАЯ ЛОГИКА ***
+******************** */
 
-// *** 3.1) Шаблон для Фотокарточки ***
+// ===================== НАПОЛНЕНИЕ САЙТА ПОЛЬЗОВАТЕЛЬСКИМИ ФОТОГРАФИЯМИ =====================
+
+// *** 1) Шаблон для Фотокарточки ***
 var getPhotoCard = function (urlNumber, photoDescription, likesCount, commentsList) {
   var photoCard = {
     url: 'photos/' + urlNumber + '.jpg',
@@ -124,7 +135,7 @@ var getPhotoCard = function (urlNumber, photoDescription, likesCount, commentsLi
 };
 
 
-// *** 3.2) Генерация Объекта с комментарием ***
+// *** 2) Генерация Объекта с комментарием ***
 var getCommentObject = function () {
   // --- Случайные элементы массивов ---
   var randomMessage = getRandomNumber(ZERO_ELEMENT, MESSAGES.length); // --- Случайный номер элемента для массива комментариев
@@ -150,7 +161,7 @@ var getCommentObject = function () {
 };
 
 
-// *** 3.3) Генерация массива с комментариями ***
+// *** 3) Генерация массива с комментариями ***
 var getCommentsArray = function () {
   var randomCommentsCount = getRandomNumber(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
   var commentsArray = [];
@@ -163,7 +174,7 @@ var getCommentsArray = function () {
 };
 
 
-// *** 3.4) Генерация массива с Фотографиями ***
+// *** 4) Генерация массива с Фотографиями ***
 var getArrayOfPhotos = function () {
   // --- Заполнение адресного массива элементами ---
   var addressArray = getArrayOfNumbers(addressArray, PHOTOS_COUNT);
@@ -191,7 +202,7 @@ var getArrayOfPhotos = function () {
 };
 
 
-// *** 3.4) Наполнение DOM-элементов и отрисовка Фотографий на страницу ***
+// *** 5) Наполнение DOM-элементов и отрисовка Фотографий на страницу ***
 
 // --- Функция для наполнения шаблона для Фото данными из массива ---
 var getARenderedPicture = function (photoCard) {
@@ -211,15 +222,17 @@ var arrayOfPhotos = getArrayOfPhotos();
 // --- Создание фрагмента в DOM ---
 var fragment = document.createDocumentFragment();
 
-for (var j = 0; j < arrayOfPhotos.length; j++) {
-  fragment.appendChild(getARenderedPicture(arrayOfPhotos[j]));
+for (var k = 0; k < arrayOfPhotos.length; k++) {
+  fragment.appendChild(getARenderedPicture(arrayOfPhotos[k]));
 }
 
 // --- Отрисовка фотографий на страницу ---
 PICTURES_CONTAINER.appendChild(fragment);
 
 
-// *** 3.5) Логика показа полноразмерной фотографии ***
+// ===================== ЛОГИКА ПОКАЗА ПОЛНОРАЗМЕРНОЙ ФОТОГРАФИИ =====================
+
+// *** Функция для показа полноразмерного изображения ***
 var getFullsizePicture = function (smallPicture) {
   // --- Превью полноразмерной фотографии ---
   var fullsizePicture = BIG_PICTURE;
@@ -258,11 +271,122 @@ getFullsizePicture(arrayOfPhotos[ZERO_ELEMENT]);
 
 
 // --- Открытие скрытого по умолчанию блока ---
-BIG_PICTURE_CONTAINER.classList.remove('hidden');
+// BIG_PICTURE_CONTAINER.classList.remove('hidden');
 
 // --- Временное сокрытие блоков ---
 COMMENTS_COUNT.classList.add('hidden');
 COMMENTS_LOADER.classList.add('hidden');
 
-// --- Добавление <body> класса для отключения прокрутки страницы при открытом модальтном окне ---
+// --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
 BODY.classList.add('modal-open');
+
+
+// ===================== ЗАГРУЗКА ИЗОБРАЖЕНИЯ И ПОКАЗ ФОРМЫ РЕДАКТИРОВАНИЯ =====================
+
+// *** 1) Функция для обработчика события закрытия окна редактирования изображения с помощью "Escape" ***
+var escPressHandler = function (evt) {
+  /*
+    Дополнительная проверка ("... && FIELD_FOR_HASHTAGS !== document.activeElement")
+    гарантирует, что окно редактирования изображения не будет закрыто при нажатии
+    на клавишу «Escape» в момент, когда фокус находится в поле ввода хештегов.
+  */
+  if (evt.key === ESC && FIELD_FOR_HASHTAGS !== document.activeElement) {
+    evt.preventDefault();
+
+    closeImageEditingForm();
+  }
+};
+
+// *** 2) Функция для ОТКРЫТИЯ окна редактирования изображения ***
+var openImageEditingForm = function () {
+  IMAGE_EDITING_FORM.classList.remove('hidden');
+
+  document.addEventListener('keydown', escPressHandler);
+};
+
+// *** 3) Функция для ЗАКРЫТИЯ окна редактирования изображения ***
+var closeImageEditingForm = function () {
+  IMAGE_EDITING_FORM.classList.add('hidden');
+  FORM_UPLOAD_IMAGE.reset();
+
+  document.removeEventListener('keydown', escPressHandler);
+};
+
+
+/* *****************************************
+*** ОСНОВНАЯ ЛОГИКА: ОБРАБОТЧИКИ СОБЫТИЙ ***
+***************************************** */
+
+// *** Обработчик события — Загрузка изображения на сайта ***
+UPLOAD_FILE.addEventListener('change', function () {
+  openImageEditingForm();
+});
+
+// *** Обработчик события — Закрытие Формы редактирования изображения ***
+IMAGE_EDITING_FORM_EXIT.addEventListener('click', function () {
+  closeImageEditingForm();
+});
+
+// *** Обработчик события перетаскивания ползунка для изменения насыщенности изображения ***
+SLIDER_HANDLE.addEventListener('mouseup', function () {});
+
+
+// ===================== ВАЛИДАЦИЯ ХЕШ-ТЕГОВ =====================
+
+// *** Регулярное выражение — паттерн для валидации Хештегов ***
+var regExpForHashtag = /^#[\wа-яА-я]*$/;
+
+// *** Обработчик события при изменении значения поля ввода Хештегов ***
+FIELD_FOR_HASHTAGS.addEventListener('input', function () {
+  // --- Массив — набор хештегов из поля ввода ---
+  var HASHTAGS = FIELD_FOR_HASHTAGS.value.split(SEPARATOR);
+
+  // *** Цикл для валидации Хештегов ***
+  for (var i = 0; i < HASHTAGS.length; i++) {
+    var matchCount = 0; // --- Количество повторяющихся хештегов
+
+    // --- Проверка на повторяющиеся хештеги в массиве ---
+    for (var j = i + 1; j < HASHTAGS.length; j++) {
+      if (HASHTAGS[i].toLowerCase() === HASHTAGS[j].toLowerCase()) {
+        matchCount++;
+      }
+    }
+
+    // *** Переменные для ОШИБОК валидации ***
+    var errPatternMismatch = !regExpForHashtag.test(HASHTAGS[i]);
+    var errLoneHash = HASHTAGS[i] === '#';
+    var errTooLongHashtag = HASHTAGS[i].length >= 20;
+    var errTooManyHashtags = HASHTAGS.length > 5;
+    var errDuplicateHashtags = matchCount > 0;
+
+    // *** Переменные для СООБЩЕНИЙ об ошибках валидации ***
+    var messageOfPatternMismatch = 'Ошибка! Хештег «' + HASHTAGS[i] + '» не соответствует паттерну ввода! Хештег не может содержать пробелы, специальные символы (типа «@, $, #»), символы пунктуации (тире, дефис, запятая и т.д.), а также эмодзи.';
+    var messageOfLoneHash = 'Ошибка! Хештег «' + HASHTAGS[i] + '» не может состоять только из "решётки"!';
+    var messageOfTooLongHashtag = 'Ошибка! Длина хештега «' + HASHTAGS[i] + '» превышает 20 символов!';
+    var messageOfTooManyHashtags = 'Ошибка! Нельзя добавить больше 5-ти хештегов! Количество хештегов сейчас: ' + HASHTAGS.length;
+    var messageOfDuplicateHashtags = 'Ошибка! Набор не может содержать несколько одинаковых хештегов!';
+
+
+    // --- Правила валидации набора хештегов ---
+    if (errPatternMismatch) { // --- 1) Несоответствие паттерну ввода (наличие спецсимволов, пнктуационных знаков и т.д.)
+      FIELD_FOR_HASHTAGS.setCustomValidity(messageOfPatternMismatch);
+      break;
+    } else if (errTooManyHashtags) { // --- 2) Слишком много хештегов (не должно ыбть больше 5)
+      FIELD_FOR_HASHTAGS.setCustomValidity(messageOfTooManyHashtags);
+      break;
+    } else if (errLoneHash) { // --- 3) "Одинокая решётка" — хештег не может состоять только из "решётки"
+      FIELD_FOR_HASHTAGS.setCustomValidity(messageOfLoneHash);
+      break;
+    } else if (errTooLongHashtag) { // --- 4) Слишком много символов в хештеге (не должно быть больше 20)
+      FIELD_FOR_HASHTAGS.setCustomValidity(messageOfTooLongHashtag);
+      break;
+    } else if (errDuplicateHashtags) { // --- 5) Повторяющиеся хештеги
+      FIELD_FOR_HASHTAGS.setCustomValidity(messageOfDuplicateHashtags);
+      break;
+    } else {
+      FIELD_FOR_HASHTAGS.setCustomValidity('');
+    }
+  }
+
+  // --- Набор хештегов для проверки валидации: # ## #1unogrande$ #h@sh #ter #more #TER #neksus #Ter #good #bad #EVIL #этот_хештег_должен_быть_короче_20_символов
+});
