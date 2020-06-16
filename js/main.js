@@ -16,6 +16,14 @@ var MAX_COMMENTS_COUNT = 5; // --- Максимальное количество
 var DELETE_COUNT = 1; // --- Количество удаляемых элементов ( необходимо для метода ".splice()" )
 var ESC = 'Escape'; // --- Ключ для клавишы "Escape"
 var SEPARATOR = ' '; // --- Символ «пробел» — разделитель для метода "split()"
+var BASE_NUMBER_SYSTEM = 10; // --- Основа системы счисления
+var MIN_SCALE_VALUE = 25; // --- Минимальное значение масштаба изображения
+var MAX_SCALE_VALUE = 100; // --- Максимальное значение масштаба изображения
+var SCALE_STEP = 25; // --- Шаг масштабирования
+var PERCENTAGE = '%'; // --- Процентный символ (для указания значения масштаба в процентах)
+var TRANSFORMATION_RATIO = 100; // --- Коэффициент трансформации ( для "transform: scale()" )
+var CLASS_LIST_MOD = 1; // --- Порядковый номер элемента с модификатором класса (в массиве классов эффектов для изображения)
+var ATTRIBUTE_NULL_VALUE = ''; // --- Сброс значения атрибута элемента
 
 // *** 1.2) Переменные для DOM-элементов ***
 var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
@@ -40,6 +48,15 @@ var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay')
 var IMAGE_EDITING_FORM_EXIT = IMAGE_EDITING_FORM.querySelector('#upload-cancel'); // --- Кнопка закрытия окна редактирования изображения
 var FIELD_FOR_HASHTAGS = IMAGE_EDITING_FORM.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
 var SLIDER_HANDLE = IMAGE_EDITING_FORM.querySelector('.effect-level__pin'); // --- Ручка слайдера
+
+var IMAGE_EDITING_PREVIEW = IMAGE_EDITING_FORM.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
+var SCALE_CONTROL_SMALLER = IMAGE_EDITING_FORM.querySelector('.scale__control--smaller'); // --- Кнопка уменьшения масштаба изображения
+var SCALE_CONTROL_BIGGER = IMAGE_EDITING_FORM.querySelector('.scale__control--bigger'); // --- Кнопка увеличения масштаба изображения
+var SCALE_CONTROL_VALUE = IMAGE_EDITING_FORM.querySelector('.scale__control--value'); // --- Поле, отображающее масштаб (в процентах)
+
+var IMAGE_EDITING_FIELDSET_OF_EFFECTS = IMAGE_EDITING_FORM.querySelector('.img-upload__effects'); // --- Группа полей с эффектами для изображения
+var IMAGE_EDITING_EFFECTS = IMAGE_EDITING_FIELDSET_OF_EFFECTS.querySelectorAll('.effects__radio'); // --- Список эффектов для изображения
+var IMAGE_EDITING_EFFECT_PREVIEWS = IMAGE_EDITING_FIELDSET_OF_EFFECTS.querySelectorAll('.effects__preview'); // --- Лейблы к эффектам
 
 
 // *** 1.3) Массивы с данными (моки) ***
@@ -308,6 +325,8 @@ var openImageEditingForm = function () {
 var closeImageEditingForm = function () {
   IMAGE_EDITING_FORM.classList.add('hidden');
   FORM_UPLOAD_IMAGE.reset();
+  IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_NULL_VALUE;
+  IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
 
   document.removeEventListener('keydown', escPressHandler);
 };
@@ -390,3 +409,90 @@ FIELD_FOR_HASHTAGS.addEventListener('input', function () {
 
   // --- Набор хештегов для проверки валидации: # ## #1unogrande$ #h@sh #ter #more #TER #neksus #Ter #good #bad #EVIL #этот_хештег_должен_быть_короче_20_символов
 });
+
+
+// ===================== ИЗМЕНЕНИЕ МАСШТАБА ИЗОБРАЖЕНИЯ =====================
+
+// *** Функция для обработчика события изменения масштаба изображения ***
+var scaleChangeHandler = function (scaleChanger) {
+  // --- Приведение значения масштаба к числовому типу ---
+  var valueOfScale = parseInt(SCALE_CONTROL_VALUE.value, BASE_NUMBER_SYSTEM);
+
+  // --- Дерево условий для УМЕНЬШЕНИЯ и УВЕЛИЧЕНИЯ масштаба изображения ---
+  if (scaleChanger === SCALE_CONTROL_SMALLER) {
+    /*
+      Если значение масштаба больше либо равно МИНИМАЛЬНОМУ значению,
+      тогда УМЕНЬШИТЬ значение на Шаг масштабирования (25).
+    */
+    if (valueOfScale >= MIN_SCALE_VALUE) {
+      valueOfScale -= SCALE_STEP;
+
+      /*
+        Если получившееся значение меньше МИНИМАЛЬНОГО значения масштаба,
+        тогда приравнять получившееся к МИНИМАЛЬНОМУ.
+      */
+      if (valueOfScale < MIN_SCALE_VALUE) {
+        valueOfScale = MIN_SCALE_VALUE;
+      }
+    }
+
+  } else if (scaleChanger === SCALE_CONTROL_BIGGER) {
+    /*
+      Если значение масштаба меньше либо равно МАКСИМАЛЬНОМУ значению,
+      тогда УВЕЛИЧИТЬ значение на Шаг масштабирования (25).
+    */
+    if (valueOfScale <= MAX_SCALE_VALUE) {
+      valueOfScale += SCALE_STEP;
+
+      /*
+        Если получившееся значение больше МАКСИМАЛЬНОГО значения масштаба,
+        тогда приравнять получившееся к МАКСИМАЛЬНОМУ.
+      */
+      if (valueOfScale > MAX_SCALE_VALUE) {
+        valueOfScale = MAX_SCALE_VALUE;
+      }
+    }
+  }
+
+  // --- Запись получившегося значения в атрибут "value" поля отображения масштаба ---
+  SCALE_CONTROL_VALUE.value = valueOfScale + PERCENTAGE;
+
+  // --- Коэффициент масштабирования для CSS-свойства "transform" ---
+  var scaleFactor = valueOfScale / TRANSFORMATION_RATIO;
+
+  // --- Добавление CSS-свойства "transform: scale()" редактируемому изображению ---
+  IMAGE_EDITING_PREVIEW.style = 'transform: scale(' + scaleFactor + ')';
+};
+
+
+// *** Обработчик события УМЕНЬШЕНИЯ масштаба ***
+SCALE_CONTROL_SMALLER.addEventListener('click', function () {
+  scaleChangeHandler(SCALE_CONTROL_SMALLER);
+});
+
+// *** Обработчик события УВЕЛИЧЕНИЯ масштаба ***
+SCALE_CONTROL_BIGGER.addEventListener('click', function () {
+  scaleChangeHandler(SCALE_CONTROL_BIGGER);
+});
+
+
+// ===================== ПРИМЕНЕНИЕ ЭФФЕКТА К ИЗОБРАЖЕНИЮ =====================
+
+// *** Функция для обработчика события наложения эффекта на изображение ***
+var imageEffectChangeHandler = function () {
+  // --- Сброс списка классов изображения ***
+  IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
+
+  // --- Цикл для реализации наложения эффектов на изображение ***
+  for (var i = 0; i < IMAGE_EDITING_EFFECTS.length; i++) {
+    if (IMAGE_EDITING_EFFECTS[i].checked) {
+      IMAGE_EDITING_PREVIEW.classList.add(IMAGE_EDITING_EFFECT_PREVIEWS[i].classList[CLASS_LIST_MOD]);
+    }
+  }
+};
+
+// *** Обработчик события Наложения эффекта на изображение ***
+IMAGE_EDITING_FIELDSET_OF_EFFECTS.addEventListener('change', function () {
+  imageEffectChangeHandler();
+});
+
