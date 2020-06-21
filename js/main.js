@@ -36,6 +36,7 @@ var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок д
 
 var BIG_PICTURE_CONTAINER = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
 var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
+var BIG_PICTURE_CLOSE = BIG_PICTURE.querySelector('.big-picture__cancel'); // --- Кнопка закрытия полноразмерной фотографии
 
 var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Список комментариев
 var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
@@ -46,8 +47,9 @@ var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- �
 var UPLOAD_FILE = FORM_UPLOAD_IMAGE.querySelector('#upload-file'); // --- Контрол загрузки нового изображения
 var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
 var IMAGE_EDITING_FORM_EXIT = IMAGE_EDITING_FORM.querySelector('#upload-cancel'); // --- Кнопка закрытия окна редактирования изображения
-var FIELD_FOR_HASHTAGS = IMAGE_EDITING_FORM.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
 var SLIDER_HANDLE = IMAGE_EDITING_FORM.querySelector('.effect-level__pin'); // --- Ручка слайдера
+var FIELD_FOR_HASHTAGS = IMAGE_EDITING_FORM.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
+var FIELD_FOR_DESCRIPTION = IMAGE_EDITING_FORM.querySelector('.text__description'); // --- Поле для описания фотографии
 
 var IMAGE_EDITING_PREVIEW = IMAGE_EDITING_FORM.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
 var SCALE_CONTROL_SMALLER = IMAGE_EDITING_FORM.querySelector('.scale__control--smaller'); // --- Кнопка уменьшения масштаба изображения
@@ -132,6 +134,17 @@ var getArrayOfNumbers = function (emptyArray, arrayLength) {
   return arrayOfNumbers;
 };
 
+// *** 2.3) Генератор копий массивов ***
+var getCopyOfArray = function (originalArray) {
+  var copyOfArray = [];
+
+  for (var i = 0; i < originalArray.length; i++) {
+    copyOfArray[i] = originalArray[i];
+  }
+
+  return copyOfArray;
+};
+
 
 /* ********************
 *** ОСНОВНАЯ ЛОГИКА ***
@@ -154,14 +167,18 @@ var getPhotoCard = function (urlNumber, photoDescription, likesCount, commentsLi
 
 // *** 2) Генерация Объекта с комментарием ***
 var getCommentObject = function () {
+  // --- Копирование оригинальных массивов ---
+  var copyOfMessages = getCopyOfArray(MESSAGES); // --- Копия массива Сообщений
+  var copyOfNames = getCopyOfArray(NAMES); // --- Копия массива Имён комментаторов
+
   // --- Случайные элементы массивов ---
-  var randomMessage = getRandomNumber(ZERO_ELEMENT, MESSAGES.length); // --- Случайный номер элемента для массива комментариев
-  var randomName = getRandomNumber(ZERO_ELEMENT, NAMES.length); // --- Случайный номер элемента для массива имён
+  var randomMessage = getRandomNumber(ZERO_ELEMENT, copyOfMessages.length); // --- Случайный номер элемента для массива комментариев
+  var randomName = getRandomNumber(ZERO_ELEMENT, copyOfNames.length); // --- Случайный номер элемента для массива имён
 
   // --- Переменные для формирования объекта-комментария ---
   var avatarNumber = getRandomNumber(FIRST_AVATAR, LAST_AVATAR);
-  var message = MESSAGES[randomMessage];
-  var name = NAMES[randomName];
+  var message = copyOfMessages[randomMessage];
+  var name = copyOfNames[randomName];
 
   // --- Шаблон для объекта-комментария ---
   var commentObject = {
@@ -170,9 +187,9 @@ var getCommentObject = function () {
     commentatorName: name
   };
 
-  // --- Удаление использованных элементов из массивов ---
-  MESSAGES.splice(randomMessage, DELETE_COUNT);
-  NAMES.splice(randomName, DELETE_COUNT);
+  // --- Удаление использованных элементов из копий массивов ---
+  copyOfMessages.splice(randomMessage, DELETE_COUNT);
+  copyOfNames.splice(randomName, DELETE_COUNT);
 
   return commentObject;
 };
@@ -234,13 +251,13 @@ var getARenderedPicture = function (photoCard) {
 };
 
 // --- Генерация массива с Фотографиями ---
-var arrayOfPhotos = getArrayOfPhotos();
+var generatedArrayOfPhotos = getArrayOfPhotos();
 
 // --- Создание фрагмента в DOM ---
 var fragment = document.createDocumentFragment();
 
-for (var k = 0; k < arrayOfPhotos.length; k++) {
-  fragment.appendChild(getARenderedPicture(arrayOfPhotos[k]));
+for (var k = 0; k < generatedArrayOfPhotos.length; k++) {
+  fragment.appendChild(getARenderedPicture(generatedArrayOfPhotos[k]));
 }
 
 // --- Отрисовка фотографий на страницу ---
@@ -282,81 +299,170 @@ var getFullsizePicture = function (smallPicture) {
   return fullsizePicture;
 };
 
-
-// --- Вызов функции показа полноразмерного изображения ---
-getFullsizePicture(arrayOfPhotos[ZERO_ELEMENT]);
-
-
-// --- Открытие скрытого по умолчанию блока ---
-// BIG_PICTURE_CONTAINER.classList.remove('hidden');
-
 // --- Временное сокрытие блоков ---
 COMMENTS_COUNT.classList.add('hidden');
 COMMENTS_LOADER.classList.add('hidden');
 
-// --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
-BODY.classList.add('modal-open');
+
+/*
+__________________________________________________________________________
+
+------------------------ ПОЛНОРАЗМЕРНОЕ ИЗОБРАЖЕНИЕ ----------------------
+__________________________________________________________________________
+
+*/
+
+// ============ ЛОГИКА ПОКАЗА ПОЛНОРАЗМЕРОГО ИЗОБРАЖЕНИЯ ============
+
+// *** DOM-элементы пользовательских фотографий ***
+var userImages = PICTURES_CONTAINER.querySelectorAll('.picture__img');
 
 
-// ===================== ЗАГРУЗКА ИЗОБРАЖЕНИЯ И ПОКАЗ ФОРМЫ РЕДАКТИРОВАНИЯ =====================
+// *** Присвоение ID каждому DOM-элементу с фотографией ***
+/*
+  Данный цикл нужен для связи DOM-элементов пользовательских фотографий
+  с JS-объектами, которые их описывают.
+  Необходимо для применения способа делегирования.
+*/
+for (var l = 0; l < userImages.length; l++) {
+  userImages[l].id = l; // --- Присвоение в качестве ID порядкового номера (от 0 до длины коллекции фотографий пользователей)
+}
 
-// *** 1) Функция для обработчика события закрытия окна редактирования изображения с помощью "Escape" ***
-var escPressHandler = function (evt) {
-  /*
-    Дополнительная проверка ("... && FIELD_FOR_HASHTAGS !== document.activeElement")
-    гарантирует, что окно редактирования изображения не будет закрыто при нажатии
-    на клавишу «Escape» в момент, когда фокус находится в поле ввода хештегов.
-  */
-  if (evt.key === ESC && FIELD_FOR_HASHTAGS !== document.activeElement) {
+// *** Функция для обработчика события закрытия полноразмерного изображения с помощью "Escape" ***
+var escPressInBigPictureHandler = function (evt) {
+  if (evt.key === ESC) {
     evt.preventDefault();
 
-    closeImageEditingForm();
+    closeBigPictureHandler();
   }
 };
 
-// *** 2) Функция для ОТКРЫТИЯ окна редактирования изображения ***
-var openImageEditingForm = function () {
-  IMAGE_EDITING_FORM.classList.remove('hidden');
 
-  document.addEventListener('keydown', escPressHandler);
+// *** Функция для обработчика события ОТКРЫТИЯ полноразмерного изображения ***
+var openBigPictureHandler = function (evt) {
+  var numberOfJSObject; // --- Переменная для порядкового номера JS-объекта
+
+  // --- Дерево условий для таргетированного нахождения нужного ID элемента ---
+  if (evt.target.id) {
+    numberOfJSObject = evt.target.id;
+  } else if (evt.target.querySelector('img').id) {
+    numberOfJSObject = evt.target.querySelector('img').id;
+  }
+
+  // --- Получение полноразмерного изображения ---
+  getFullsizePicture(generatedArrayOfPhotos[numberOfJSObject]);
+
+  // --- Открытие полноразмерного изображения ---
+  BIG_PICTURE_CONTAINER.classList.remove('hidden');
+
+  // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+  BODY.classList.add('modal-open');
+
+  // === ОБРАБОТЧИКИ СОБЫТИЙ ===
+  BIG_PICTURE_CLOSE.addEventListener('click', closeBigPictureHandler);
+
+  document.addEventListener('keydown', escPressInBigPictureHandler);
 };
 
-// *** 3) Функция для ЗАКРЫТИЯ окна редактирования изображения ***
-var closeImageEditingForm = function () {
-  IMAGE_EDITING_FORM.classList.add('hidden');
-  FORM_UPLOAD_IMAGE.reset();
-  IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_NULL_VALUE;
-  IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
+// *** Функция для обработчика события ЗАКРЫТИЯ полноразмерного изображения ***
+var closeBigPictureHandler = function () {
+  // --- Сокрытие полноразмерного изображения ---
+  BIG_PICTURE_CONTAINER.classList.add('hidden');
 
-  document.removeEventListener('keydown', escPressHandler);
+  // --- Удаление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+  BODY.classList.remove('modal-open');
+
+  // === УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ ===
+  BIG_PICTURE_CLOSE.removeEventListener('click', closeBigPictureHandler);
+
+  document.removeEventListener('keydown', escPressInBigPictureHandler);
 };
 
 
-/* *****************************************
-*** ОСНОВНАЯ ЛОГИКА: ОБРАБОТЧИКИ СОБЫТИЙ ***
-***************************************** */
-
-// *** Обработчик события — Загрузка изображения на сайта ***
-UPLOAD_FILE.addEventListener('change', function () {
-  openImageEditingForm();
-});
-
-// *** Обработчик события — Закрытие Формы редактирования изображения ***
-IMAGE_EDITING_FORM_EXIT.addEventListener('click', function () {
-  closeImageEditingForm();
-});
-
-// *** Обработчик события перетаскивания ползунка для изменения насыщенности изображения ***
-SLIDER_HANDLE.addEventListener('mouseup', function () {});
+// *** Добавление обработчика события для показа Полноразмерной фотографии ***
+PICTURES_CONTAINER.addEventListener('click', openBigPictureHandler);
 
 
-// ===================== ВАЛИДАЦИЯ ХЕШ-ТЕГОВ =====================
+/*
+________________________________________________________________________________
 
-// *** Регулярное выражение — паттерн для валидации Хештегов ***
-var regExpForHashtag = /^#[\wа-яА-я]*$/;
+------------------------ ФОРМА РЕДАКТИРОВАНИЯ ИЗОБРАЖЕНИЯ ----------------------
+________________________________________________________________________________
 
-// *** Обработчик события при изменении значения поля ввода Хештегов ***
-FIELD_FOR_HASHTAGS.addEventListener('input', function () {
+*/
+
+// ============ ИЗМЕНЕНИЕ МАСШТАБА ИЗОБРАЖЕНИЯ ============
+
+// *** 1) Функция для изменения значения в поле и масштаба изображения ***
+var scaleChange = function (valueOfScale) {
+  // --- Запись получившегося значения в атрибут "value" поля отображения масштаба ---
+  SCALE_CONTROL_VALUE.value = valueOfScale + PERCENTAGE;
+
+  // --- Коэффициент масштабирования для CSS-свойства "transform" ---
+  var scaleFactor = valueOfScale / TRANSFORMATION_RATIO;
+
+  // --- Добавление CSS-свойства "transform: scale()" редактируемому изображению ---
+  IMAGE_EDITING_PREVIEW.style = 'transform: scale(' + scaleFactor + ')';
+};
+
+// *** 2) Функция для обработчика события УМЕНЬШЕНИЯ масштаба изображения ***
+var scaleDecreaseHandler = function () {
+  // --- Приведение значения масштаба к числовому типу ---
+  var valueOfScaleForDecrease = parseInt(SCALE_CONTROL_VALUE.value, BASE_NUMBER_SYSTEM);
+
+  /*
+    Если значение масштаба больше либо равно МИНИМАЛЬНОМУ значению,
+    тогда УМЕНЬШИТЬ значение на Шаг масштабирования (25).
+  */
+  if (valueOfScaleForDecrease >= MIN_SCALE_VALUE) {
+    valueOfScaleForDecrease -= SCALE_STEP;
+
+    /*
+      Если получившееся значение меньше МИНИМАЛЬНОГО значения масштаба,
+      тогда приравнять получившееся к МИНИМАЛЬНОМУ.
+    */
+    if (valueOfScaleForDecrease < MIN_SCALE_VALUE) {
+      valueOfScaleForDecrease = MIN_SCALE_VALUE;
+    }
+  }
+
+  // --- Изменение масштаба редактируемого изображения ---
+  scaleChange(valueOfScaleForDecrease);
+};
+
+// *** 3) Функция для обработчика события УВЕЛИЧЕНИЯ масштаба изображения ***
+var scaleIncreaseHandler = function () {
+  // --- Приведение значения масштаба к числовому типу ---
+  var valueOfScaleForIncrease = parseInt(SCALE_CONTROL_VALUE.value, BASE_NUMBER_SYSTEM);
+
+  /*
+    Если значение масштаба меньше либо равно МАКСИМАЛЬНОМУ значению,
+    тогда УВЕЛИЧИТЬ значение на Шаг масштабирования (25).
+  */
+  if (valueOfScaleForIncrease <= MAX_SCALE_VALUE) {
+    valueOfScaleForIncrease += SCALE_STEP;
+
+    /*
+      Если получившееся значение больше МАКСИМАЛЬНОГО значения масштаба,
+      тогда приравнять получившееся к МАКСИМАЛЬНОМУ.
+    */
+    if (valueOfScaleForIncrease > MAX_SCALE_VALUE) {
+      valueOfScaleForIncrease = MAX_SCALE_VALUE;
+    }
+  }
+
+  // --- Изменение масштаба редактируемого изображения ---
+  scaleChange(valueOfScaleForIncrease);
+};
+
+
+// ============ ВАЛИДАЦИЯ ХЕШТЕГОВ ============
+
+// *** Функция для валидации хештегов ***
+var hashtagValidationHandler = function () {
+  // *** Регулярное выражение — паттерн для валидации Хештегов ***
+  var regExpForHashtag = /^#[\wа-яА-я]*$/;
+
   // --- Массив — набор хештегов из поля ввода ---
   var HASHTAGS = FIELD_FOR_HASHTAGS.value.split(SEPARATOR);
 
@@ -407,76 +513,18 @@ FIELD_FOR_HASHTAGS.addEventListener('input', function () {
     }
   }
 
-  // --- Набор хештегов для проверки валидации: # ## #1unogrande$ #h@sh #ter #more #TER #neksus #Ter #good #bad #EVIL #этот_хештег_должен_быть_короче_20_символов
-});
+  /*
+    ______________________________________
 
+    Набор хештегов для проверки валидации:
+    ______________________________________
 
-// ===================== ИЗМЕНЕНИЕ МАСШТАБА ИЗОБРАЖЕНИЯ =====================
-
-// *** Функция для обработчика события изменения масштаба изображения ***
-var scaleChangeHandler = function (scaleChanger) {
-  // --- Приведение значения масштаба к числовому типу ---
-  var valueOfScale = parseInt(SCALE_CONTROL_VALUE.value, BASE_NUMBER_SYSTEM);
-
-  // --- Дерево условий для УМЕНЬШЕНИЯ и УВЕЛИЧЕНИЯ масштаба изображения ---
-  if (scaleChanger === SCALE_CONTROL_SMALLER) {
-    /*
-      Если значение масштаба больше либо равно МИНИМАЛЬНОМУ значению,
-      тогда УМЕНЬШИТЬ значение на Шаг масштабирования (25).
-    */
-    if (valueOfScale >= MIN_SCALE_VALUE) {
-      valueOfScale -= SCALE_STEP;
-
-      /*
-        Если получившееся значение меньше МИНИМАЛЬНОГО значения масштаба,
-        тогда приравнять получившееся к МИНИМАЛЬНОМУ.
-      */
-      if (valueOfScale < MIN_SCALE_VALUE) {
-        valueOfScale = MIN_SCALE_VALUE;
-      }
-    }
-
-  } else if (scaleChanger === SCALE_CONTROL_BIGGER) {
-    /*
-      Если значение масштаба меньше либо равно МАКСИМАЛЬНОМУ значению,
-      тогда УВЕЛИЧИТЬ значение на Шаг масштабирования (25).
-    */
-    if (valueOfScale <= MAX_SCALE_VALUE) {
-      valueOfScale += SCALE_STEP;
-
-      /*
-        Если получившееся значение больше МАКСИМАЛЬНОГО значения масштаба,
-        тогда приравнять получившееся к МАКСИМАЛЬНОМУ.
-      */
-      if (valueOfScale > MAX_SCALE_VALUE) {
-        valueOfScale = MAX_SCALE_VALUE;
-      }
-    }
-  }
-
-  // --- Запись получившегося значения в атрибут "value" поля отображения масштаба ---
-  SCALE_CONTROL_VALUE.value = valueOfScale + PERCENTAGE;
-
-  // --- Коэффициент масштабирования для CSS-свойства "transform" ---
-  var scaleFactor = valueOfScale / TRANSFORMATION_RATIO;
-
-  // --- Добавление CSS-свойства "transform: scale()" редактируемому изображению ---
-  IMAGE_EDITING_PREVIEW.style = 'transform: scale(' + scaleFactor + ')';
+    # ## #1unogrande$ #h@sh #ter #more #TER #neksus #Ter #good #bad #EVIL #этот_хештег_должен_быть_короче_20_символов
+  */
 };
 
 
-// *** Обработчик события УМЕНЬШЕНИЯ масштаба ***
-SCALE_CONTROL_SMALLER.addEventListener('click', function () {
-  scaleChangeHandler(SCALE_CONTROL_SMALLER);
-});
-
-// *** Обработчик события УВЕЛИЧЕНИЯ масштаба ***
-SCALE_CONTROL_BIGGER.addEventListener('click', function () {
-  scaleChangeHandler(SCALE_CONTROL_BIGGER);
-});
-
-
-// ===================== ПРИМЕНЕНИЕ ЭФФЕКТА К ИЗОБРАЖЕНИЮ =====================
+// ============ НАЛОЖЕНИЕ ЭФФЕКТОВ НА ИЗОБРАЖЕНИЕ ============
 
 // *** Функция для обработчика события наложения эффекта на изображение ***
 var imageEffectChangeHandler = function () {
@@ -491,8 +539,81 @@ var imageEffectChangeHandler = function () {
   }
 };
 
-// *** Обработчик события Наложения эффекта на изображение ***
-IMAGE_EDITING_FIELDSET_OF_EFFECTS.addEventListener('change', function () {
-  imageEffectChangeHandler();
+
+// ============ ЛОГИКА ОТКРЫТИЯ И ЗАКРЫТИЯ ОКНА РЕДАКТИРОВАНИЯ ============
+
+// *** 1) Функция для обработчика события закрытия окна редактирования изображения с помощью "Escape" ***
+var escPressInImageFormHandler = function (evt) {
+  if (evt.key === ESC) {
+    evt.preventDefault();
+
+    /*
+      Дополнительная проверка ("... !== document.activeElement")
+      гарантирует, что окно редактирования изображения не будет закрыто при нажатии
+      на клавишу «Escape» в момент, когда фокус находится в поле ввода хештегов
+      или описания к фотографии.
+    */
+    if (FIELD_FOR_HASHTAGS !== document.activeElement && FIELD_FOR_DESCRIPTION !== document.activeElement) {
+      closeImageEditingForm();
+    }
+  }
+};
+
+
+// *** 2) Функция для ОТКРЫТИЯ окна редактирования изображения ***
+var openImageEditingForm = function () {
+  IMAGE_EDITING_FORM.classList.remove('hidden');
+
+  // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+  BODY.classList.add('modal-open');
+
+  // ======= ОБРАБОТЧИКИ СОБЫТИЙ =======
+  FIELD_FOR_HASHTAGS.addEventListener('input', hashtagValidationHandler); // --- Валидация хештегов
+
+  SCALE_CONTROL_SMALLER.addEventListener('click', scaleDecreaseHandler); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
+  SCALE_CONTROL_BIGGER.addEventListener('click', scaleIncreaseHandler); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
+
+  IMAGE_EDITING_FIELDSET_OF_EFFECTS.addEventListener('change', imageEffectChangeHandler); // --- Обработчик события Наложения эффекта на изображение
+
+  document.addEventListener('keydown', escPressInImageFormHandler); // --- Закрытие модального окна с помощью "Escape"
+};
+
+
+// *** 3) Функция для ЗАКРЫТИЯ окна редактирования изображения ***
+var closeImageEditingForm = function () {
+  IMAGE_EDITING_FORM.classList.add('hidden');
+  FORM_UPLOAD_IMAGE.reset(); // --- Сброс полей Формы в исходное состояние
+  IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_NULL_VALUE;
+  IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
+
+  // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+  BODY.classList.remove('modal-open');
+
+  // ======= УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ =======
+  FIELD_FOR_HASHTAGS.removeEventListener('input', hashtagValidationHandler); // --- Валидация хештегов
+
+  SCALE_CONTROL_SMALLER.removeEventListener('click', scaleDecreaseHandler); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
+  SCALE_CONTROL_BIGGER.removeEventListener('click', scaleIncreaseHandler); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
+
+  IMAGE_EDITING_FIELDSET_OF_EFFECTS.removeEventListener('change', imageEffectChangeHandler); // --- Обработчик события Наложения эффекта на изображение
+
+  document.removeEventListener('keydown', escPressInImageFormHandler); // --- Закрытие модального окна с помощью "Escape"
+};
+
+
+/* *****************************************
+*** ОСНОВНАЯ ЛОГИКА: ОБРАБОТЧИКИ СОБЫТИЙ ***
+***************************************** */
+
+// *** Обработчик события — Загрузка изображения на сайт ***
+UPLOAD_FILE.addEventListener('change', function () {
+  openImageEditingForm();
 });
 
+// *** Обработчик события — Закрытие Формы редактирования изображения ***
+IMAGE_EDITING_FORM_EXIT.addEventListener('click', function () {
+  closeImageEditingForm();
+});
+
+// *** Обработчик события перетаскивания ползунка для изменения насыщенности изображения ***
+SLIDER_HANDLE.addEventListener('mouseup', function () {});
