@@ -93,7 +93,6 @@ window.bigPicture = (function () {
     }
 
     // --- Получение полноразмерного изображения ---
-    // getFullsize(window.gallery.generatedArrayOfPhotos[numberOfJSObject]);
     getFullsize(window.backend.dataArray[numberOfJSObject]);
 
     // --- Открытие полноразмерного изображения ---
