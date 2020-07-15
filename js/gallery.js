@@ -81,6 +81,7 @@ window.gallery = (function () {
   };
 
 
+  // --- Получение и обработка данных с сервера ---
   window.backend.load(onRequestSuccess, onRequestError);
 
 })();
