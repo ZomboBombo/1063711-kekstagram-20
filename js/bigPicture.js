@@ -63,9 +63,9 @@ window.bigPicture = (function () {
       if (i >= temporaryCommentsLength) {
         break;
       } else {
-        COMMENTS_ELEMENTS[i].querySelector('.social__picture').src = smallPicture.comments[i].commentatorAvatar;
-        COMMENTS_ELEMENTS[i].querySelector('.social__picture').alt = smallPicture.comments[i].commentatorName;
-        COMMENTS_ELEMENTS[i].querySelector('.social__text').textContent = smallPicture.comments[i].commentatorMessage;
+        COMMENTS_ELEMENTS[i].querySelector('.social__picture').src = smallPicture.comments[i].avatar;
+        COMMENTS_ELEMENTS[i].querySelector('.social__picture').alt = smallPicture.comments[i].name;
+        COMMENTS_ELEMENTS[i].querySelector('.social__text').textContent = smallPicture.comments[i].message;
       }
     }
 
@@ -93,7 +93,8 @@ window.bigPicture = (function () {
     }
 
     // --- Получение полноразмерного изображения ---
-    getFullsize(window.gallery.generatedArrayOfPhotos[numberOfJSObject]);
+    // getFullsize(window.gallery.generatedArrayOfPhotos[numberOfJSObject]);
+    getFullsize(window.backend.dataArray[numberOfJSObject]);
 
     // --- Открытие полноразмерного изображения ---
     BIG_PICTURE_CONTAINER.classList.remove('hidden');
