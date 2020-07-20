@@ -8,19 +8,13 @@ ___________________________________
 
 */
 window.gallery = (function () {
-
   /*
   ----------------------------------------------------------------------------------
   ---------------------- ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ И ФУНКЦИИ ----------------------
   ----------------------------------------------------------------------------------
   */
-
   // ********* DOM-элементы *********
-  var PICTURE_TEMPLATE = document.querySelector('#picture') // --- Шаблон для вставки фотографий
-                      .content
-                      .querySelector('.picture');
-
-  var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
+  var IMAGE_FILTERS_SECTION = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
 
 
   /*
@@ -29,35 +23,42 @@ window.gallery = (function () {
   ----------------------------------------------------------------------------------
   */
 
-  /*
-  ********* Наполнение DOM-элементов и отрисовка Фотографий на страницу *********
-  */
-  // --- Функция для наполнения шаблона для Фото данными из массива ---
-  var getARenderedPicture = function (photoCard, idNumber) {
-    var renderedPicture = PICTURE_TEMPLATE.cloneNode(true); // --- Клонирование шаблона для фотографий
+  // --- Пустой массив для хранения фотографий, полученных с сервера ---
+  var imagesData = [];
 
-    // --- Заполнение шаблона данными от элементов массива ---
-    renderedPicture.querySelector('.picture__img').id = idNumber;
-    renderedPicture.querySelector('.picture__img').src = photoCard.url;
-    renderedPicture.querySelector('.picture__likes').textContent = photoCard.likes;
-    renderedPicture.querySelector('.picture__comments').textContent = photoCard.comments.length;
+  // *** Функция обновления списка фотографий ***
+  var updateImage = window.debounce(function (data) {
+    window.renderImage(data);
+  });
 
-    return renderedPicture;
+
+  window.filter.change.onDefault = function () {
+    updateImage(imagesData);
+  };
+
+  window.filter.change.onRandom = function () {
+    var tenRandomImagesData = window.filter.getTenRandomPhoto(imagesData);
+    updateImage(tenRandomImagesData);
+  };
+
+  window.filter.change.onDiscussed = function () {
+    var discussedImagesData = window.filter.getDiscussedPhotos(imagesData);
+    updateImage(discussedImagesData);
   };
 
 
   // *** Функция для обработчика события успешного выполнения запроса ***
   var onRequestSuccess = function (images) {
-    // --- Создание фрагмента в DOM ---
-    var fragment = document.createDocumentFragment();
+    // --- Показ блока с фильтрами для отображения фотографий ---
+    IMAGE_FILTERS_SECTION.classList.remove('img-filters--inactive');
 
-    for (var i = 0; i < images.length; i++) {
-      fragment.appendChild(getARenderedPicture(images[i], i));
-    }
+    // --- Заполнение массива данными с сервера ---
+    imagesData = images;
 
-    // --- Отрисовка фотографий на страницу ---
-    PICTURES_CONTAINER.appendChild(fragment);
+    // --- Перерисовка фотографий на странице ---
+    updateImage(imagesData);
   };
+
 
   // *** Функция для обработчика события при ошибке в запросе ***
   var onRequestError = function (errorMessage) {
