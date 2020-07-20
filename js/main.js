@@ -16,8 +16,6 @@ window.main = (function () {
   */
 
   // ********* DOM-элементы *********
-  var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
-
   var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
   var UPLOAD_FILE = FORM_UPLOAD_IMAGE.querySelector('#upload-file'); // --- Контрол загрузки нового изображения
 
@@ -27,9 +25,6 @@ window.main = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-
-  // *** Добавление обработчика события для показа Полноразмерной фотографии ***
-  PICTURES_CONTAINER.addEventListener('click', window.bigPicture.onOpen);
 
 
   // *** Обработчик события — Загрузка изображения на сайт ***

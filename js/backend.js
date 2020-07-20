@@ -15,10 +15,13 @@ window.backend = (function () {
   */
 
   // ********* КОНСТАНТЫ *********
-  var STATUS_OK = 200; // --- Статус "ОК"
-  var STATUS_BAD = 400; // --- Статус "Неверный запрос"
-  var STATUS_UNAUTHORIZED = 401; // --- Статус "Неавторизованный пользователь"
-  var STATUS_NOT_FOUND = 404; // --- Статус "Сервер не найден"
+  // --- Статусы ответов сервера ---
+  var Status = {
+    OK: 200, // --- Статус "ОК"
+    BAD: 400, // --- Статус "Неверный запрос"
+    UNAUTHORIZED: 401, // --- Статус "Неавторизованный пользователь"
+    NOT_FOUND: 404 // --- Статус "Сервер не найден"
+  };
 
   var TIMEOUT_IN_MS = 10000; // --- Ограничение времени выполнения запроса
 
@@ -30,17 +33,17 @@ window.backend = (function () {
     var errorMessage;
 
     switch (request.status) {
-      case STATUS_OK:
+      case Status.OK:
         success(request.response);
         break;
 
-      case STATUS_BAD:
+      case Status.BAD:
         errorMessage = 'Invalid request to server! Please do not repeat the request and make sure it is correct.';
         break;
-      case STATUS_UNAUTHORIZED:
+      case Status.UNAUTHORIZED:
         errorMessage = 'Unauthorized user! Please authorize and repeat the request.';
         break;
-      case STATUS_NOT_FOUND:
+      case Status.NOT_FOUND:
         errorMessage = 'Server not found at: ' + url;
         break;
 
