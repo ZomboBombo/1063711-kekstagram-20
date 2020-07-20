@@ -8,29 +8,25 @@ _________________________________________________
 
 */
 window.bigPicture = (function () {
-
   /*
   ----------------------------------------------------------------------------------
   ---------------------- ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ И ФУНКЦИИ ----------------------
   ----------------------------------------------------------------------------------
   */
+  // ********* КОНСТАНТЫ *********
+  var REG_EXP_OF_NUMBER = /\d+/; // --- Шаблон регулярного выражения для поиска числа в составе строки
+  var NUBER_SYSTEM_BASE = 10; // --- Основа истемы счисления ( десятичная, для метода "parseInt()" )
+  var SHIFT = 1; // --- Сдвиг ( для выбора нужного элемента массива )
+
 
   // ********* DOM-элементы *********
   var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
 
+  var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
+
   var BIG_PICTURE_CONTAINER = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
   var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
   var BIG_PICTURE_CLOSE = BIG_PICTURE.querySelector('.big-picture__cancel'); // --- Кнопка закрытия полноразмерной фотографии
-
-  var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Список комментариев
-  var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
-  var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
-  var COMMENTS_ELEMENTS = COMMENTS.querySelectorAll('.social__comment'); // --- Элементы списка комментариев
-
-
-  // --- Временное сокрытие некоторых блоков ---
-  COMMENTS_COUNT.classList.add('hidden');
-  COMMENTS_LOADER.classList.add('hidden');
 
 
   /*
@@ -39,38 +35,6 @@ window.bigPicture = (function () {
   ----------------------------------------------------------------------------------
   */
 
-  // *** Функция для показа полноразмерного изображения ***
-  var getFullsize = function (smallPicture) {
-    // --- Превью полноразмерной фотографии ---
-    var fullsizePicture = BIG_PICTURE;
-
-    // --- Заполнение полей превью данными из массива ---
-    fullsizePicture.querySelector('.big-picture__img').querySelector('img').src = smallPicture.url;
-    fullsizePicture.querySelector('.likes-count').textContent = smallPicture.likes;
-    fullsizePicture.querySelector('.social__caption').textContent = smallPicture.description;
-    fullsizePicture.querySelector('.comments-count').textContent = smallPicture.comments.length;
-
-    // --- Временное значение длины массива отображаемых комментариев ---
-    var temporaryCommentsLength = 2;
-
-    // --- Заполнение полей комментариев данными из массива комментариев ---
-    for (var i = 0; i < smallPicture.comments.length; i++) {
-      /*
-        Временное решение для корректного заполнения комментариев.
-        Если длина массива комментариев превышает настоящую длину
-        списка элементов в разметке, то происходит выход из цикла.
-      */
-      if (i >= temporaryCommentsLength) {
-        break;
-      } else {
-        COMMENTS_ELEMENTS[i].querySelector('.social__picture').src = smallPicture.comments[i].avatar;
-        COMMENTS_ELEMENTS[i].querySelector('.social__picture').alt = smallPicture.comments[i].name;
-        COMMENTS_ELEMENTS[i].querySelector('.social__text').textContent = smallPicture.comments[i].message;
-      }
-    }
-
-    return fullsizePicture;
-  };
 
   // *** Функция для обработчика события закрытия полноразмерного изображения с помощью "Escape" ***
   var onEscPress = function (evt) {
@@ -85,15 +49,17 @@ window.bigPicture = (function () {
   var onOpen = function (evt) {
     var numberOfJSObject; // --- Переменная для порядкового номера JS-объекта
 
-    // --- Дерево условий для таргетированного нахождения нужного ID элемента ---
-    if (evt.target.id) {
-      numberOfJSObject = evt.target.id;
-    } else if (evt.target.querySelector('img').id) {
-      numberOfJSObject = evt.target.querySelector('img').id;
+
+    // --- Дерево условий для таргетированного нахождения нужного элемента ---
+    if (evt.target.src) {
+      numberOfJSObject = parseInt(evt.target.getAttribute('src').match(REG_EXP_OF_NUMBER), NUBER_SYSTEM_BASE);
+    } else if (evt.target.querySelector('img').src) {
+      numberOfJSObject = parseInt(evt.target.querySelector('img').getAttribute('src').match(REG_EXP_OF_NUMBER), NUBER_SYSTEM_BASE);
     }
 
+
     // --- Получение полноразмерного изображения ---
-    getFullsize(window.backend.dataArray[numberOfJSObject]);
+    window.fullsizePictureFiller(window.backend.dataArray[numberOfJSObject - SHIFT]);
 
     // --- Открытие полноразмерного изображения ---
     BIG_PICTURE_CONTAINER.classList.remove('hidden');
@@ -122,8 +88,7 @@ window.bigPicture = (function () {
   };
 
 
-  return {
-    onOpen: onOpen
-  };
+  // *** Добавление обработчика события для показа Полноразмерной фотографии ***
+  PICTURES_CONTAINER.addEventListener('click', onOpen);
 
 })();
