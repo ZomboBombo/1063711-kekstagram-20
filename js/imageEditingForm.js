@@ -17,7 +17,11 @@ window.imageEditingForm = (function () {
 
   // ********* КОНСТАНТЫ *********
   var ATTRIBUTE_NULL_VALUE = ''; // --- Сброс значения атрибута элемента
+  var HUNDRED_PERCENT_VALUE = '100%';
   var CLASS_LIST_MOD = 1; // --- Порядковый номер элемента с модификатором класса (в массиве классов эффектов для изображения)
+  var FILTER_ORIGINAL = 'effect-none';
+  var DISPLAY_NONE = 'none';
+  var DISPLAY_BLOCK = 'block';
 
   // ********* DOM-элементы *********
   var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
@@ -26,6 +30,7 @@ window.imageEditingForm = (function () {
 
   var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
   var IMAGE_EDITING_PREVIEW = IMAGE_EDITING_FORM.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
+  var IMAGE_EFFECT_LEVEL = IMAGE_EDITING_FORM.querySelector('.img-upload__effect-level'); // --- Группа полей слайдера
   var IMAGE_EDITING_FORM_EXIT = IMAGE_EDITING_FORM.querySelector('#upload-cancel'); // --- Кнопка закрытия окна редактирования изображения
   var IMAGE_EDITING_FIELDSET_OF_EFFECTS = IMAGE_EDITING_FORM.querySelector('.img-upload__effects'); // --- Группа полей с эффектами для изображения
   var IMAGE_EDITING_EFFECTS = IMAGE_EDITING_FIELDSET_OF_EFFECTS.querySelectorAll('.effects__radio'); // --- Список эффектов для изображения
@@ -46,13 +51,28 @@ window.imageEditingForm = (function () {
 
   // *** Функция для обработчика события наложения эффекта на изображение ***
   var onEffectChange = function () {
-    // --- Сброс списка классов изображения ***
+    // --- Сброс списка классов и стилей наложенного фильтра изображения ***
     IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
+    IMAGE_EDITING_PREVIEW.style.filter = ATTRIBUTE_NULL_VALUE;
+
+    // --- Сброс положения ползунка при переключении фильтров ---
+    window.slider.EFFECT_LEVEL_PIN.style.left = HUNDRED_PERCENT_VALUE;
+    window.slider.EFFECT_LEVEL_DEPTH.style.width = HUNDRED_PERCENT_VALUE;
+
 
     // --- Цикл для реализации наложения эффектов на изображение ***
     for (var i = 0; i < IMAGE_EDITING_EFFECTS.length; i++) {
       if (IMAGE_EDITING_EFFECTS[i].checked) {
         IMAGE_EDITING_PREVIEW.classList.add(IMAGE_EDITING_EFFECT_PREVIEWS[i].classList[CLASS_LIST_MOD]);
+
+        // --- Условие для включения фильтра «Оригинал» ---
+        if (IMAGE_EDITING_EFFECTS[i].id === FILTER_ORIGINAL) {
+          IMAGE_EFFECT_LEVEL.style.display = DISPLAY_NONE;
+        } else {
+          IMAGE_EFFECT_LEVEL.style.display = DISPLAY_BLOCK;
+        }
+
+        break;
       }
     }
   };
@@ -81,13 +101,13 @@ window.imageEditingForm = (function () {
   // *** 2) Функция для ОТКРЫТИЯ окна редактирования изображения ***
   var onOpen = function () {
     IMAGE_EDITING_FORM.classList.remove('hidden');
+    IMAGE_EFFECT_LEVEL.style.display = DISPLAY_NONE;
 
     // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
     BODY.classList.add('modal-open');
 
     // ======= ОБРАБОТЧИКИ СОБЫТИЙ =======
     FIELD_FOR_HASHTAGS.addEventListener('input', window.hashtagField.onValidation); // --- Валидация хештегов
-    // FIELD_FOR_HASHTAGS.addEventListener('input', onValidation); // --- Валидация хештегов
 
     SCALE_CONTROL_SMALLER.addEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
     SCALE_CONTROL_BIGGER.addEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
@@ -110,7 +130,6 @@ window.imageEditingForm = (function () {
 
     // ======= УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ =======
     FIELD_FOR_HASHTAGS.removeEventListener('input', window.hashtagField.onValidation); // --- Валидация хештегов
-    // FIELD_FOR_HASHTAGS.removeEventListener('input', onValidation); // --- Валидация хештегов
 
     SCALE_CONTROL_SMALLER.removeEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
     SCALE_CONTROL_BIGGER.removeEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
@@ -123,13 +142,7 @@ window.imageEditingForm = (function () {
 
   return {
     // --- Ссылки на DOM-элементы ---
-    FORM_UPLOAD_IMAGE: FORM_UPLOAD_IMAGE,
-    IMAGE_EDITING_FORM: IMAGE_EDITING_FORM,
-    IMAGE_EDITING_PREVIEW: IMAGE_EDITING_PREVIEW,
     IMAGE_EDITING_FORM_EXIT: IMAGE_EDITING_FORM_EXIT,
-    IMAGE_EDITING_FIELDSET_OF_EFFECTS: IMAGE_EDITING_FIELDSET_OF_EFFECTS,
-    IMAGE_EDITING_EFFECTS: IMAGE_EDITING_EFFECTS,
-    IMAGE_EDITING_EFFECT_PREVIEWS: IMAGE_EDITING_EFFECT_PREVIEWS,
 
     // --- Обработчики событий ---
     onOpen: onOpen,
