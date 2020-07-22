@@ -45,7 +45,7 @@ window.pictureScale = (function () {
     var scaleFactor = valueOfScale / TRANSFORMATION_RATIO;
 
     // --- Добавление CSS-свойства "transform: scale()" редактируемому изображению ---
-    IMAGE_EDITING_PREVIEW.style = 'transform: scale(' + scaleFactor + ')';
+    IMAGE_EDITING_PREVIEW.style.transform = 'scale(' + scaleFactor + ')';
   };
 
 
