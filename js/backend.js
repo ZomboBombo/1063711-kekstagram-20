@@ -15,6 +15,11 @@ window.backend = (function () {
   */
 
   // ********* КОНСТАНТЫ *********
+  var TIMEOUT_IN_MS = 10000; // --- Ограничение времени выполнения запроса
+
+  var URL_FOR_GET = 'https://javascript.pages.academy/kekstagram/data'; // --- Адрес для получения данных с сервера
+  var URL_FOR_POST = 'https://javascript.pages.academy/kekstagram'; // --- Адрес для отправки данных на сервер
+
   // --- Статусы ответов сервера ---
   var Status = {
     OK: 200, // --- Статус "ОК"
@@ -22,10 +27,6 @@ window.backend = (function () {
     UNAUTHORIZED: 401, // --- Статус "Неавторизованный пользователь"
     NOT_FOUND: 404 // --- Статус "Сервер не найден"
   };
-
-  var TIMEOUT_IN_MS = 10000; // --- Ограничение времени выполнения запроса
-
-  var URL_FOR_GET = 'https://javascript.pages.academy/kekstagram/data'; // --- Адрес для получения данных с сервера
 
 
   // --- Функция обработки статуса запроса и предупреждения о возможных ошибках ---
@@ -71,9 +72,10 @@ window.backend = (function () {
     --- Функция обработки запроса серверу и его ответа ---
     ------------------------------------------------------
     */
-    load: function (onLoad, onError) {
+    loadData: function (onLoad, onError) {
       var xhr = new XMLHttpRequest(); // --- Специальный объект XHR для "общения" с сервером
       xhr.responseType = 'json'; // --- Указание браузеру, в каком формате представить полученные с сервера данные
+
 
       // *** ОБРАБОТКА СОБЫТИЙ ***
       // --- Обработчик события полуения ответа от сервера ---
@@ -107,6 +109,25 @@ window.backend = (function () {
       // *** ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ ***
       xhr.open('GET', URL_FOR_GET); // --- Открытие запорса к серверу
       xhr.send(); // --- Отправка запроса
+    },
+
+
+    /*
+    --------------------------------------------------
+    --- Функция отправки данных из формы на сервер ---
+    --------------------------------------------------
+    */
+    sendData: function (data, onLoad, onError) {
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'json';
+
+      xhr.addEventListener('load', function () {
+        requestStatus(xhr, onLoad, onError, URL_FOR_POST);
+      });
+
+
+      xhr.open('POST', URL_FOR_POST);
+      xhr.send(data);
     },
 
 
