@@ -18,7 +18,6 @@ window.bigPicture = (function () {
   var NUBER_SYSTEM_BASE = 10; // --- Основа истемы счисления ( десятичная, для метода "parseInt()" )
   var SHIFT = 1; // --- Сдвиг ( для выбора нужного элемента массива )
 
-
   // ********* DOM-элементы *********
   var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
 
@@ -34,8 +33,6 @@ window.bigPicture = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-
-
   // *** Функция для обработчика события закрытия полноразмерного изображения с помощью "Escape" ***
   var onEscPress = function (evt) {
     if (evt.key === window.util.ESC) {
@@ -59,7 +56,7 @@ window.bigPicture = (function () {
 
 
     // --- Получение полноразмерного изображения ---
-    window.fullsizePictureFiller(window.backend.dataArray[numberOfJSObject - SHIFT]);
+    window.fullsizePicture.open(window.backend.dataArray[numberOfJSObject - SHIFT]);
 
     // --- Открытие полноразмерного изображения ---
     BIG_PICTURE_CONTAINER.classList.remove('hidden');
