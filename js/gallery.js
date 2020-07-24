@@ -52,7 +52,7 @@ window.gallery = (function () {
     // --- Показ блока с фильтрами для отображения фотографий ---
     IMAGE_FILTERS_SECTION.classList.remove('img-filters--inactive');
 
-    imagesData = images;  // --- Заполнение массива данными с сервера
+    imagesData = images; // --- Заполнение массива данными с сервера
     updateImage(imagesData);
   };
 
