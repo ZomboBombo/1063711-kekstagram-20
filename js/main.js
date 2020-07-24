@@ -29,13 +29,13 @@ window.main = (function () {
 
   // *** Обработчик события — Загрузка изображения на сайт ***
   UPLOAD_FILE.addEventListener('change', function () {
-    window.imageEditingForm.onOpen();
+    window.imageEditingForm.open();
   });
 
 
   // *** Обработчик события — Закрытие Формы редактирования изображения ***
-  window.imageEditingForm.IMAGE_EDITING_FORM_EXIT.addEventListener('click', function () {
-    window.imageEditingForm.onClose();
+  window.imageEditingForm.exit.addEventListener('click', function () {
+    window.imageEditingForm.close();
   });
 
 })();
