@@ -26,9 +26,9 @@ window.imageEditingForm = (function () {
   // ********* DOM-элементы *********
   var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
 
-  var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
+  var IMAGE_UPLOAD_FORM = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
 
-  var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
+  var IMAGE_EDITING_FORM = IMAGE_UPLOAD_FORM.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
   var IMAGE_EDITING_PREVIEW = IMAGE_EDITING_FORM.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
   var IMAGE_EFFECT_LEVEL = IMAGE_EDITING_FORM.querySelector('.img-upload__effect-level'); // --- Группа полей слайдера
   var IMAGE_EDITING_FORM_EXIT = IMAGE_EDITING_FORM.querySelector('#upload-cancel'); // --- Кнопка закрытия окна редактирования изображения
@@ -121,7 +121,7 @@ window.imageEditingForm = (function () {
   // *** 3) Функция для ЗАКРЫТИЯ окна редактирования изображения ***
   var onClose = function () {
     IMAGE_EDITING_FORM.classList.add('hidden');
-    FORM_UPLOAD_IMAGE.reset(); // --- Сброс полей Формы в исходное состояние
+    IMAGE_UPLOAD_FORM.reset(); // --- Сброс полей Формы в исходное состояние
     IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_NULL_VALUE;
     IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
 
@@ -140,13 +140,25 @@ window.imageEditingForm = (function () {
   };
 
 
+  // ************ СБОР ДАННЫХ ФОРМЫ И ОТПРАВКА НА СЕРВЕР ************
+  var form = IMAGE_UPLOAD_FORM;
+
+  // *** Функция обработки соыбтия отправки формы ***
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+
+    window.backend.sendData(new FormData(form), window.formDataSubmit.success, window.formDataSubmit.error);
+  };
+
+  form.addEventListener('submit', onFormSubmit);
+
   return {
     // --- Ссылки на DOM-элементы ---
-    IMAGE_EDITING_FORM_EXIT: IMAGE_EDITING_FORM_EXIT,
+    exit: IMAGE_EDITING_FORM_EXIT,
 
     // --- Обработчики событий ---
-    onOpen: onOpen,
-    onClose: onClose
+    open: onOpen,
+    close: onClose
   };
 
 })();
