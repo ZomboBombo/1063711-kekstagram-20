@@ -52,10 +52,7 @@ window.gallery = (function () {
     // --- Показ блока с фильтрами для отображения фотографий ---
     IMAGE_FILTERS_SECTION.classList.remove('img-filters--inactive');
 
-    // --- Заполнение массива данными с сервера ---
-    imagesData = images;
-
-    // --- Перерисовка фотографий на странице ---
+    imagesData = images;  // --- Заполнение массива данными с сервера
     updateImage(imagesData);
   };
 
@@ -67,7 +64,7 @@ window.gallery = (function () {
 
     // --- Задаём ему стили ---
     node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: rgba(227, 38, 54, 0.9);';
-    node.style.padding = '25px 0';
+    node.style.padding = '25px 20px';
     node.style.position = 'absolute';
     node.style.right = 0;
     node.style.left = 0;
@@ -83,6 +80,6 @@ window.gallery = (function () {
 
 
   // --- Получение и обработка данных с сервера ---
-  window.backend.load(onRequestSuccess, onRequestError);
+  window.backend.loadData(onRequestSuccess, onRequestError);
 
 })();
