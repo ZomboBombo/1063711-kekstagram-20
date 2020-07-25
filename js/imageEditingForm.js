@@ -14,12 +14,11 @@ window.imageEditingForm = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* КОНСТАНТЫ *********
-  var ATTRIBUTE_EMPTY_VALUE = ''; // --- Сброс значения атрибута элемента
   var HUNDRED_PERCENT_VALUE = '100%';
-  var CLASS_LIST_MOD = 1; // --- Порядковый номер элемента с модификатором класса (в массиве классов эффектов для изображения)
   var FILTER_ORIGINAL = 'effect-none';
   var DISPLAY_NONE = 'none';
   var DISPLAY_BLOCK = 'block';
+  var CLASS_LIST_MOD = 1; // --- Порядковый номер элемента с модификатором класса (в массиве классов эффектов для изображения)
 
   // ********* DOM-элементы *********
   var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
@@ -49,8 +48,8 @@ window.imageEditingForm = (function () {
   // *** Функция для обработчика события наложения эффекта на изображение ***
   var onEffectChange = function () {
     // --- Сброс списка классов и стилей наложенного фильтра изображения ***
-    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_EMPTY_VALUE;
-    IMAGE_EDITING_PREVIEW.style.filter = ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.classList = window.util.ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.style.filter = window.util.ATTRIBUTE_EMPTY_VALUE;
 
     // --- Сброс положения ползунка при переключении фильтров ---
     window.slider.EFFECT_LEVEL_PIN.style.left = HUNDRED_PERCENT_VALUE;
@@ -118,8 +117,8 @@ window.imageEditingForm = (function () {
   var onClose = function () {
     IMAGE_EDITING_FORM.classList.add('hidden');
     IMAGE_UPLOAD_FORM.reset(); // --- Сброс полей Формы в исходное состояние
-    IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_EMPTY_VALUE;
-    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.style = window.util.ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.classList = window.util.ATTRIBUTE_EMPTY_VALUE;
 
     // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
     BODY.classList.remove('modal-open');
