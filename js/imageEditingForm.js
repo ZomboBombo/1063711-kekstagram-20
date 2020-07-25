@@ -8,15 +8,13 @@ ________________________________________
 
 */
 window.imageEditingForm = (function () {
-
   /*
   ----------------------------------------------------------------------------------
   ---------------------- ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ И ФУНКЦИИ ----------------------
   ----------------------------------------------------------------------------------
   */
-
   // ********* КОНСТАНТЫ *********
-  var ATTRIBUTE_NULL_VALUE = ''; // --- Сброс значения атрибута элемента
+  var ATTRIBUTE_EMPTY_VALUE = ''; // --- Сброс значения атрибута элемента
   var HUNDRED_PERCENT_VALUE = '100%';
   var CLASS_LIST_MOD = 1; // --- Порядковый номер элемента с модификатором класса (в массиве классов эффектов для изображения)
   var FILTER_ORIGINAL = 'effect-none';
@@ -48,17 +46,15 @@ window.imageEditingForm = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-
   // *** Функция для обработчика события наложения эффекта на изображение ***
   var onEffectChange = function () {
     // --- Сброс списка классов и стилей наложенного фильтра изображения ***
-    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
-    IMAGE_EDITING_PREVIEW.style.filter = ATTRIBUTE_NULL_VALUE;
+    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.style.filter = ATTRIBUTE_EMPTY_VALUE;
 
     // --- Сброс положения ползунка при переключении фильтров ---
     window.slider.EFFECT_LEVEL_PIN.style.left = HUNDRED_PERCENT_VALUE;
     window.slider.EFFECT_LEVEL_DEPTH.style.width = HUNDRED_PERCENT_VALUE;
-
 
     // --- Цикл для реализации наложения эффектов на изображение ***
     for (var i = 0; i < IMAGE_EDITING_EFFECTS.length; i++) {
@@ -79,8 +75,7 @@ window.imageEditingForm = (function () {
 
 
   // ============ ОТКРЫТИЕ И ЗАКРЫТИЕ ОКНА РЕДАКТИРОВАНИЯ ============
-
-  // *** 1) Функция для обработчика события закрытия окна редактирования изображения с помощью "Escape" ***
+  // *** Функция для обработчика события закрытия окна редактирования изображения с помощью "Escape" ***
   var onEscPress = function (evt) {
     if (evt.key === window.util.ESC) {
       evt.preventDefault();
@@ -98,7 +93,7 @@ window.imageEditingForm = (function () {
   };
 
 
-  // *** 2) Функция для ОТКРЫТИЯ окна редактирования изображения ***
+  // *** Функция для ОТКРЫТИЯ окна редактирования изображения ***
   var onOpen = function () {
     IMAGE_EDITING_FORM.classList.remove('hidden');
     IMAGE_EFFECT_LEVEL.style.display = DISPLAY_NONE;
@@ -119,12 +114,12 @@ window.imageEditingForm = (function () {
   };
 
 
-  // *** 3) Функция для ЗАКРЫТИЯ окна редактирования изображения ***
+  // *** Функция для ЗАКРЫТИЯ окна редактирования изображения ***
   var onClose = function () {
     IMAGE_EDITING_FORM.classList.add('hidden');
     IMAGE_UPLOAD_FORM.reset(); // --- Сброс полей Формы в исходное состояние
-    IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_NULL_VALUE;
-    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_NULL_VALUE;
+    IMAGE_EDITING_PREVIEW.style = ATTRIBUTE_EMPTY_VALUE;
+    IMAGE_EDITING_PREVIEW.classList = ATTRIBUTE_EMPTY_VALUE;
 
     // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
     BODY.classList.remove('modal-open');
@@ -140,6 +135,10 @@ window.imageEditingForm = (function () {
 
     document.removeEventListener('keydown', onEscPress); // --- Закрытие модального окна с помощью "Escape"
   };
+
+
+  // *** Обработчик события — Закрытие Формы редактирования изображения ***
+  IMAGE_EDITING_FORM_EXIT.addEventListener('click', onClose);
 
 
   // ************ СБОР ДАННЫХ ФОРМЫ И ОТПРАВКА НА СЕРВЕР ************

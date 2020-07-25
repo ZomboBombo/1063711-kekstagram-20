@@ -34,7 +34,9 @@ window.formDataSubmit = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-  // *** Справочники методов работы с модальными окнами ***
+
+  // *************** Справочники методов работы с модальными окнами ***************
+  // --- Модальное окно УСПЕХА ---
   var successDialog = {
     open: function () {
       window.imageEditingForm.close();
@@ -56,6 +58,8 @@ window.formDataSubmit = (function () {
     },
   };
 
+
+  // --- Модальное окно ОШИБКИ ---
   var errorDialog = {
     open: function () {
       window.imageEditingForm.close();
@@ -78,7 +82,7 @@ window.formDataSubmit = (function () {
   };
 
 
-  // *** Функции обработки событий закрытия модальных окон с помощью клавиши "Escape" ***
+  // *************** Функции обработки событий закрытия модальных окон с помощью клавиши "Escape" ***************
   var onSuccessEscPress = function (evt) {
     if (evt.key === window.util.ESC) {
       evt.preventDefault();
@@ -94,7 +98,7 @@ window.formDataSubmit = (function () {
   };
 
 
-  // *** Функции обработки событий закрытия модальных окон при клике на произвольную оласть экрана ***
+  // *************** Функции обработки событий закрытия модальных окон при клике на произвольную оласть экрана ***************
   var onClickOutSuccess = function (evt) {
     if (evt.target !== successModalInner) {
       successDialog.close();
@@ -108,7 +112,7 @@ window.formDataSubmit = (function () {
   };
 
 
-  // *** Функции обработки событий закрытия модальных окон по клику на кнопку закрытия ***
+  // *************** Функции обработки событий закрытия модальных окон по клику на кнопку закрытия ***************
   var onSuccessModalClose = function (evt) {
     evt.preventDefault();
     successDialog.close();
@@ -120,7 +124,7 @@ window.formDataSubmit = (function () {
   };
 
 
-  // *** Открытие модальных окон ***
+  // *************** Открытие модальных окон ***************
   var openSuccessWindow = function () {
     successDialog.open();
   };
