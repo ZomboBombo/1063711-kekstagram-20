@@ -22,9 +22,7 @@ window.gallery = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-
-  // --- Пустой массив для хранения фотографий, полученных с сервера ---
-  var imagesData = [];
+  var imagesData = []; // --- Пустой массив для хранения фотографий, полученных с сервера
 
   // *** Функция обновления списка фотографий ***
   var updateImage = window.debounce(function (data) {
@@ -32,6 +30,7 @@ window.gallery = (function () {
   });
 
 
+  // *** Запись данных в обработчики событий фильтра изображений ***
   window.filter.change.onDefault = function () {
     updateImage(imagesData);
   };
@@ -49,11 +48,11 @@ window.gallery = (function () {
 
   // *** Функция для обработчика события успешного выполнения запроса ***
   var onRequestSuccess = function (images) {
+    imagesData = images; // --- Заполнение массива данными с сервера
+    updateImage(imagesData);
+
     // --- Показ блока с фильтрами для отображения фотографий ---
     IMAGE_FILTERS_SECTION.classList.remove('img-filters--inactive');
-
-    imagesData = images;  // --- Заполнение массива данными с сервера
-    updateImage(imagesData);
   };
 
 
