@@ -111,6 +111,7 @@ window.userImageLoad = (function () {
       reader.readAsDataURL(file);
     } else {
       errorDialog.open();
+      FILE_CHOOSER.value = window.util.ATTRIBUTE_EMPTY_VALUE;
     }
   };
 
