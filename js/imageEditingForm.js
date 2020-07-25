@@ -107,7 +107,8 @@ window.imageEditingForm = (function () {
     BODY.classList.add('modal-open');
 
     // ======= ОБРАБОТЧИКИ СОБЫТИЙ =======
-    FIELD_FOR_HASHTAGS.addEventListener('input', window.hashtagField.onValidation); // --- Валидация хештегов
+    FIELD_FOR_HASHTAGS.addEventListener('input', window.formValidation.hashtagField); // --- Валидация хештегов
+    FIELD_FOR_DESCRIPTION.addEventListener('input', window.formValidation.textArea); // --- Валидация поля для описания фотографии
 
     SCALE_CONTROL_SMALLER.addEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
     SCALE_CONTROL_BIGGER.addEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
@@ -129,7 +130,8 @@ window.imageEditingForm = (function () {
     BODY.classList.remove('modal-open');
 
     // ======= УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ =======
-    FIELD_FOR_HASHTAGS.removeEventListener('input', window.hashtagField.onValidation); // --- Валидация хештегов
+    FIELD_FOR_HASHTAGS.removeEventListener('input', window.formValidation.hashtagField); // --- Валидация хештегов
+    FIELD_FOR_DESCRIPTION.removeEventListener('input', window.formValidation.textArea); // --- Валидация поля для описания фотографии
 
     SCALE_CONTROL_SMALLER.removeEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
     SCALE_CONTROL_BIGGER.removeEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
@@ -146,7 +148,6 @@ window.imageEditingForm = (function () {
   // *** Функция обработки соыбтия отправки формы ***
   var onFormSubmit = function (evt) {
     evt.preventDefault();
-
     window.backend.sendData(new FormData(form), window.formDataSubmit.success, window.formDataSubmit.error);
   };
 
