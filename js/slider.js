@@ -16,7 +16,6 @@ window.slider = (function () {
   // ********* КОНСТАНТЫ *********
   var PIXEL_UNIT = 'px';
   var PERCENT_UNIT = '%';
-  var BASE_NUMBER_SYSTEM = 10;
   var HUNDRED_PERCENT_VALUE = 100;
 
   // ********* DOM-элементы *********
@@ -80,7 +79,7 @@ window.slider = (function () {
 
 
       // --- Выделение целого числа из коррдинаты ---
-      var xCoordInteger = parseInt(EFFECT_LEVEL_PIN.style.left, BASE_NUMBER_SYSTEM);
+      var xCoordInteger = parseInt(EFFECT_LEVEL_PIN.style.left, window.util.NUMBER_SYSTEM);
 
 
       // --- Условия определения пределов движения ползунка ---
@@ -92,7 +91,7 @@ window.slider = (function () {
 
 
       // --- Процентное выражение значения насыщенности ---
-      var percentOfEffectValue = Math.floor(parseInt(EFFECT_LEVEL_PIN.style.left, BASE_NUMBER_SYSTEM) * HUNDRED_PERCENT_VALUE / Slider.maxValue);
+      var percentOfEffectValue = Math.floor(parseInt(EFFECT_LEVEL_PIN.style.left, window.util.NUMBER_SYSTEM) * HUNDRED_PERCENT_VALUE / Slider.maxValue);
 
 
       // --- Запись значения насыщенности в <input> для отправки на сервер ---

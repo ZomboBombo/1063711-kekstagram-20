@@ -28,14 +28,8 @@ window.debounce = (function () {
     // --- Значение задержки выполнения функции по умолчанию ---
     var lastTimeout = NULL_POINTER;
 
-
     return function () {
-      /*
-        Переменная, содержащая объект аргументов, которые
-        будут переданы в функцию в будущем.
-      */
       var parameters = arguments;
-
 
       /*
         Если значение "lastTimeout" не «null»,

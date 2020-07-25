@@ -108,9 +108,9 @@ window.fullsizePicture = (function () {
 
     // --- Заполнение полей превью данными из массива ---
     fullsizePicture.querySelector('.big-picture__img').querySelector('img').src = smallPicture.url;
-    fullsizePicture.querySelector('.likes-count').innerText = smallPicture.likes;
-    fullsizePicture.querySelector('.social__caption').innerText = smallPicture.description;
-    fullsizePicture.querySelector('.comments-count').innerText = smallPicture.comments.length;
+    fullsizePicture.querySelector('.likes-count').textContent = smallPicture.likes;
+    fullsizePicture.querySelector('.social__caption').textContent = smallPicture.description;
+    fullsizePicture.querySelector('.comments-count').textContent = smallPicture.comments.length;
 
     // --- Очистка списка комментариев ---
     COMMENTS.innerHTML = '';
@@ -121,7 +121,7 @@ window.fullsizePicture = (function () {
 
       commentElement.querySelector('.social__picture').src = smallPicture.comments[i].avatar;
       commentElement.querySelector('.social__picture').alt = smallPicture.comments[i].name;
-      commentElement.querySelector('.social__text').innerText = smallPicture.comments[i].message;
+      commentElement.querySelector('.social__text').textContent = smallPicture.comments[i].message;
 
       COMMENTS.appendChild(commentElement);
     }

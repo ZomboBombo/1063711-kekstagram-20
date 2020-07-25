@@ -15,7 +15,6 @@ window.bigPicture = (function () {
   */
   // ********* КОНСТАНТЫ *********
   var REG_EXP_OF_NUMBER = /\d+/; // --- Шаблон регулярного выражения для поиска числа в составе строки
-  var NUBER_SYSTEM_BASE = 10; // --- Основа истемы счисления ( десятичная, для метода "parseInt()" )
   var SHIFT = 1; // --- Сдвиг ( для выбора нужного элемента массива )
 
   // ********* DOM-элементы *********
@@ -52,9 +51,9 @@ window.bigPicture = (function () {
 
       // --- Дерево условий для таргетированного нахождения нужного элемента ---
       if (evt.target.src) {
-        numberOfJSObject = parseInt(evt.target.getAttribute('src').match(REG_EXP_OF_NUMBER), NUBER_SYSTEM_BASE);
+        numberOfJSObject = parseInt(evt.target.getAttribute('src').match(REG_EXP_OF_NUMBER), window.util.NUBER_SYSTEM);
       } else if (evt.target.querySelector('img').src) {
-        numberOfJSObject = parseInt(evt.target.querySelector('img').getAttribute('src').match(REG_EXP_OF_NUMBER), NUBER_SYSTEM_BASE);
+        numberOfJSObject = parseInt(evt.target.querySelector('img').getAttribute('src').match(REG_EXP_OF_NUMBER), window.util.NUBER_SYSTEM);
       }
 
       window.fullsizePicture.open(window.backend.dataArray[numberOfJSObject - SHIFT]); // --- Получение полноразмерного изображения
