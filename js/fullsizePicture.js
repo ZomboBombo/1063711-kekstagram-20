@@ -65,9 +65,12 @@ window.fullsizePicture = (function () {
   // *** Функция для ограничения количества показываемых комментариев ***
   var showAvailableComments = function (listOfComments) {
     if (listOfComments.length >= FIVE_COMMENTS) {
-      for (var i = FIVE_COMMENTS; i < listOfComments.length; i++) {
-        comment.hide(listOfComments[i]);
-      }
+      // --- Сокрытие комментариев ---
+      listOfComments.forEach(function (element, i) {
+        if (i >= FIVE_COMMENTS) {
+          comment.hide(element);
+        }
+      });
 
       commentsLoader.classList.remove('hidden');
     } else {
@@ -79,7 +82,6 @@ window.fullsizePicture = (function () {
   // *** Функция обработки события клика по кнопке загрузки дополнительных комментариев ***
   var onCommentsLoaderClick = function () {
     var hiddenComments = []; // --- Пустой массив для скрытых комментариев
-
 
     // --- Наполнение массива скрытыми комментариями ---
     Array.from(commentsList).forEach(function (element) {
@@ -134,15 +136,16 @@ window.fullsizePicture = (function () {
     comments.innerHTML = '';
 
     // --- Заполнение полей комментариев данными ---
-    for (var i = 0; i < smallPicture.comments.length; i++) {
+    smallPicture.comments.forEach(function (element) {
       var commentElement = commentTemplate.cloneNode(true);
 
-      commentElement.querySelector('.social__picture').src = smallPicture.comments[i].avatar;
-      commentElement.querySelector('.social__picture').alt = smallPicture.comments[i].name;
-      commentElement.querySelector('.social__text').textContent = smallPicture.comments[i].message;
+      commentElement.querySelector('.social__picture').src = element.avatar;
+      commentElement.querySelector('.social__picture').alt = element.name;
+      commentElement.querySelector('.social__text').textContent = element.message;
 
       comments.appendChild(commentElement);
-    }
+    });
+
 
     // --- Сформированный список комментариев ---
     commentsList = comments.querySelectorAll('.social__comment');

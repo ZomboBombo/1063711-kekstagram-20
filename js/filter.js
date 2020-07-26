@@ -44,19 +44,20 @@ window.filter = (function () {
 
   // *** Функция получения 10-ти рандомных фотографий ***
   var getTenRandomPhotos = function (sourceArray) {
-    // --- Пустой массив для 10-ти рандомных фото ---
-    var tenRandomPhotos = [];
-
     // --- Копия данных, полученных с сервера ---
     var copyOfSourceArray = sourceArray.slice();
 
-    for (var i = 0; i < TEN_PHOTOS; i++) {
+    // --- Массив для 10-ти рандомных фото ---
+    var tenRandomPhotos = copyOfSourceArray.map(function (element) {
       var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length); // --- Номер случайной фотографии
 
-      tenRandomPhotos[i] = copyOfSourceArray[randomPhotoNumber]; // --- Запись случайной фотографии в массив
-
+      element = copyOfSourceArray[randomPhotoNumber]; // --- Запись случайной фотографии в массив
       copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT); // --- Удаление "использованных" фотографий из массива
-    }
+
+      return element;
+    });
+
+    tenRandomPhotos.length = TEN_PHOTOS;
 
     return tenRandomPhotos;
   };
