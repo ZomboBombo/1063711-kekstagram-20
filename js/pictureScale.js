@@ -47,7 +47,7 @@ window.pictureScale = (function () {
 
   return {
     // *** Функция для обработчика события УМЕНЬШЕНИЯ масштаба изображения ***
-    onDecrease: function () {
+    zoomOut: function () {
       // --- Приведение значения масштаба к числовому типу ---
       var valueOfScaleForDecrease = parseInt(SCALE_CONTROL_VALUE.value, window.util.NUMBER_SYSTEM);
 
@@ -64,7 +64,7 @@ window.pictureScale = (function () {
     },
 
     // *** Функция для обработчика события УВЕЛИЧЕНИЯ масштаба изображения ***
-    onIncrease: function () {
+    zoomIn: function () {
       // --- Приведение значения масштаба к числовому типу ---
       var valueOfScaleForIncrease = parseInt(SCALE_CONTROL_VALUE.value, window.util.NUMBER_SYSTEM);
 
