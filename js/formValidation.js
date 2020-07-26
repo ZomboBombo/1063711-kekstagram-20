@@ -46,10 +46,9 @@ window.formValidation = (function () {
 
 
   return {
-    // *** Функция для валидации хештегов ***
-    hashtagField: function () {
+    checkHashtagField: function () {
       var regExpForHashtag = /^#[\wа-яА-Я]*$/; // --- Паттерн для валидации Хештегов
-      var notEmptyHashtagField = FIELD_FOR_HASHTAGS.value !== ''; // --- НЕ пустое поле для хештегов
+      var notEmptyHashtagField = FIELD_FOR_HASHTAGS.value !== window.util.ATTRIBUTE_EMPTY_VALUE; // --- НЕ пустое поле для хештегов
 
       // --- Массив — набор хештегов из поля ввода ---
       var hashtags = FIELD_FOR_HASHTAGS.value.split(SEPARATOR);
@@ -64,6 +63,7 @@ window.formValidation = (function () {
             matchCount++;
           }
         }
+
 
         // *** Справочник ОШИБОК валидации ***
         var error = {
@@ -115,7 +115,7 @@ window.formValidation = (function () {
       */
     },
 
-    textArea: function () {
+    checkTextArea: function () {
       var descriptionError = {
         tooManySymbols: FIELD_FOR_DESCRIPTION.value.length > MAX_DESCRIPTION_LENGTH
       };
@@ -134,7 +134,7 @@ window.formValidation = (function () {
         default:
           return validationError.remove(FIELD_FOR_DESCRIPTION);
       }
-    }
+    },
 
     /*
     ___________________________________________________________________
@@ -151,6 +151,9 @@ window.formValidation = (function () {
     ___________________________________________________________________
 
     */
+
+
+    errorReport: validationError
   };
 
 })();
