@@ -14,7 +14,6 @@ window.filter = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* КОНСТАНТЫ *********
-  var ZERO = 0; // --- Нулевой элемент
   var TEN_PHOTO = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
 
   // ********* DOM-элементы *********
@@ -53,7 +52,7 @@ window.filter = (function () {
 
     for (var i = 0; i < TEN_PHOTO; i++) {
       // --- Номер случайной фотографии ---
-      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO_ELEMENT, copyOfSourceArray.length);
+      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length);
 
       // --- Запись случайной фотографии в массив ---
       tenRandomPhoto[i] = copyOfSourceArray[randomPhotoNumber];
@@ -82,7 +81,7 @@ window.filter = (function () {
     return copyOfSourceArray.sort(function (left, right) {
       var commentsLengthDifference = right.comments.length - left.comments.length;
 
-      if (commentsLengthDifference === ZERO) {
+      if (commentsLengthDifference === window.util.ZERO) {
         commentsLengthDifference = likesComparator(left.likes, right.likes);
       }
 

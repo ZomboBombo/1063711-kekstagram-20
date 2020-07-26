@@ -36,8 +36,8 @@ window.renderImage = (function () {
 
     // --- Заполнение шаблона данными от элементов массива ---
     renderedPicture.querySelector('.picture__img').src = photoCard.url;
-    renderedPicture.querySelector('.picture__likes').innerText = photoCard.likes;
-    renderedPicture.querySelector('.picture__comments').innerText = photoCard.comments.length;
+    renderedPicture.querySelector('.picture__likes').textContent = photoCard.likes;
+    renderedPicture.querySelector('.picture__comments').textContent = photoCard.comments.length;
 
     return renderedPicture;
   };
@@ -54,9 +54,8 @@ window.renderImage = (function () {
 
     // --- Наполнение DOM-элемента данными ---
     for (var i = 0; i < images.length; i++) {
-      PICTURES_CONTAINER.appendChild(getARenderedPicture(images[i], i));
+      PICTURES_CONTAINER.appendChild(getARenderedPicture(images[i]));
     }
   };
-
 
 })();
