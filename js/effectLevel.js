@@ -54,7 +54,7 @@ window.effectLevel = (function () {
 
 
   // *** Функция изменения насыщенности фильтра ***
-  var depthChange = function (percentOfEffect) {
+  var changeDepth = function (percentOfEffect) {
     var valueOfFilter;
 
     for (var i = 0; i < filters.length; i++) {
@@ -89,7 +89,7 @@ window.effectLevel = (function () {
 
 
   return {
-    change: depthChange
+    change: changeDepth
   };
 
 })();

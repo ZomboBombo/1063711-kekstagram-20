@@ -53,9 +53,9 @@ window.renderImage = (function () {
     });
 
     // --- Наполнение DOM-элемента данными ---
-    for (var i = 0; i < images.length; i++) {
-      picturesContainer.appendChild(getARenderedPicture(images[i]));
-    }
+    images.forEach(function (element) {
+      picturesContainer.appendChild(getARenderedPicture(element));
+    });
   };
 
 })();

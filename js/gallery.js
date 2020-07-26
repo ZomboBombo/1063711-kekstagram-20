@@ -36,7 +36,7 @@ window.gallery = (function () {
   };
 
   window.filter.change.onRandom = function () {
-    var tenRandomImagesData = window.filter.getTenRandomPhoto(imagesData);
+    var tenRandomImagesData = window.filter.getTenRandomPhotos(imagesData);
     updateImage(tenRandomImagesData);
   };
 

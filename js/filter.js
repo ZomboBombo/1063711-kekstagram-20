@@ -43,7 +43,7 @@ window.filter = (function () {
 
 
   // *** Функция получения 10-ти рандомных фотографий ***
-  var getTenRandomPhoto = function (sourceArray) {
+  var getTenRandomPhotos = function (sourceArray) {
     // --- Пустой массив для 10-ти рандомных фото ---
     var tenRandomPhotos = [];
 
@@ -51,16 +51,12 @@ window.filter = (function () {
     var copyOfSourceArray = sourceArray.slice();
 
     for (var i = 0; i < TEN_PHOTOS; i++) {
-      // --- Номер случайной фотографии ---
-      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length);
+      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length); // --- Номер случайной фотографии
 
-      // --- Запись случайной фотографии в массив ---
-      tenRandomPhotos[i] = copyOfSourceArray[randomPhotoNumber];
+      tenRandomPhotos[i] = copyOfSourceArray[randomPhotoNumber]; // --- Запись случайной фотографии в массив
 
-      // --- Удаление "использованных" фотографий из массива ---
-      copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT);
+      copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT); // --- Удаление "использованных" фотографий из массива
     }
-
 
     return tenRandomPhotos;
   };
@@ -147,7 +143,7 @@ window.filter = (function () {
     change: changeFilter,
 
     // *** Функции для фильтров «Случайные» и «Обсуждаемые» соответственно ***
-    getTenRandomPhoto: getTenRandomPhoto,
+    getTenRandomPhotos: getTenRandomPhotos,
     getDiscussedPhotos: getDiscussedPhotos
   };
 

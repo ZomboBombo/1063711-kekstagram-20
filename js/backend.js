@@ -64,7 +64,6 @@ window.backend = (function () {
   // --- Пустой массив для хранения элементов из объекта данных с сервера ---
   var xhrResponseElements = [];
 
-
   return {
     /*
     ------------------------------------------------------
@@ -82,9 +81,10 @@ window.backend = (function () {
         findOutRequestStatus(xhr, onLoad, onError, URL_FOR_GET);
 
         // --- Заполнение массива элементами из объекта данных с сервера ---
-        for (var i = 0; i < xhr.response.length; i++) {
-          xhrResponseElements[i] = xhr.response[i];
-        }
+        Array.from(xhr.response).forEach(function (element, i) {
+          xhrResponseElements[i] = element;
+        });
+
       });
 
 

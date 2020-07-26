@@ -32,14 +32,14 @@ window.fullsizePicture = (function () {
 
   // *** Функция получения числа доступных к просмотру комментариев ***
   var getAvailableCommentsCount = function () {
-    commentsCurrentCount.textContent = 0;
+    commentsCurrentCount.textContent = window.util.ZERO; // --- Обнуление числа доступных комментариев
     var availableCommentsCount = parseInt(commentsCurrentCount.textContent, window.util.NUMBER_SYSTEM);
 
-    for (var i = 0; i < commentsList.length; i++) {
-      if (!commentsList[i].classList.contains('hidden')) {
+    commentsList.forEach(function (element) {
+      if (!element.classList.contains('hidden')) {
         availableCommentsCount++;
       }
-    }
+    });
 
     return availableCommentsCount;
   };

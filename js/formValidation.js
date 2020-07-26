@@ -50,7 +50,7 @@ window.formValidation = (function () {
   var showHashtagValidationMessage = function (arrayOfHashtags, notEmptyField) {
     // *** Цикл для валидации Хештегов ***
     for (var i = 0; i < arrayOfHashtags.length; i++) {
-      var matchCount = 0; // --- Количество повторяющихся хештегов
+      var matchCount = window.util.ZERO; // --- Количество повторяющихся хештегов
 
       // --- Проверка на повторяющиеся хештеги в массиве ---
       for (var j = i + 1; j < arrayOfHashtags.length; j++) {
@@ -65,7 +65,7 @@ window.formValidation = (function () {
         loneHash: arrayOfHashtags[i] === '#',
         tooLongHashtag: arrayOfHashtags[i].length >= MAX_HASHTAG_LENGTH,
         tooManyHashtags: arrayOfHashtags.length > MAX_HASHTAG_COUNT,
-        duplicateHashtags: matchCount > 0
+        duplicateHashtags: matchCount > window.util.ZERO
       };
 
       // *** Справочник СООБЩЕНИЙ об ошибках валидации ***
