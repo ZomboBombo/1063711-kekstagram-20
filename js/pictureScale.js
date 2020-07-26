@@ -21,10 +21,10 @@ window.pictureScale = (function () {
   var SCALE_STEP = 25; // --- Шаг масштабирования
 
   // ********* DOM-элементы *********
-  var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
-  var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
-  var IMAGE_EDITING_PREVIEW = IMAGE_EDITING_FORM.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
-  var SCALE_CONTROL_VALUE = IMAGE_EDITING_FORM.querySelector('.scale__control--value'); // --- Поле, отображающее масштаб (в процентах)
+  var formUploadImage = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
+  var imageEditingForm = formUploadImage.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
+  var imageEditingPreview = imageEditingForm.querySelector('.img-upload__preview img'); // --- Превью редактируемого изображения
+  var scaleControlValue = imageEditingForm.querySelector('.scale__control--value'); // --- Поле, отображающее масштаб (в процентах)
 
 
   /*
@@ -35,13 +35,13 @@ window.pictureScale = (function () {
   // *** Функция для изменения значения в поле и масштаба изображения ***
   var scaleChange = function (valueOfScale) {
     // --- Запись получившегося значения в атрибут "value" поля отображения масштаба ---
-    SCALE_CONTROL_VALUE.value = valueOfScale + PERCENTAGE;
+    scaleControlValue.value = valueOfScale + PERCENTAGE;
 
     // --- Коэффициент масштабирования для CSS-свойства "transform" ---
     var scaleFactor = valueOfScale / TRANSFORMATION_RATIO;
 
     // --- Добавление CSS-свойства "transform: scale()" редактируемому изображению ---
-    IMAGE_EDITING_PREVIEW.style.transform = 'scale(' + scaleFactor + ')';
+    imageEditingPreview.style.transform = 'scale(' + scaleFactor + ')';
   };
 
 
@@ -49,7 +49,7 @@ window.pictureScale = (function () {
     // *** Функция для обработчика события УМЕНЬШЕНИЯ масштаба изображения ***
     zoomOut: function () {
       // --- Приведение значения масштаба к числовому типу ---
-      var valueOfScaleForDecrease = parseInt(SCALE_CONTROL_VALUE.value, window.util.NUMBER_SYSTEM);
+      var valueOfScaleForDecrease = parseInt(scaleControlValue.value, window.util.NUMBER_SYSTEM);
 
       if (valueOfScaleForDecrease >= MIN_SCALE_VALUE) {
         valueOfScaleForDecrease -= SCALE_STEP;
@@ -66,7 +66,7 @@ window.pictureScale = (function () {
     // *** Функция для обработчика события УВЕЛИЧЕНИЯ масштаба изображения ***
     zoomIn: function () {
       // --- Приведение значения масштаба к числовому типу ---
-      var valueOfScaleForIncrease = parseInt(SCALE_CONTROL_VALUE.value, window.util.NUMBER_SYSTEM);
+      var valueOfScaleForIncrease = parseInt(scaleControlValue.value, window.util.NUMBER_SYSTEM);
 
       if (valueOfScaleForIncrease <= MAX_SCALE_VALUE) {
         valueOfScaleForIncrease += SCALE_STEP;

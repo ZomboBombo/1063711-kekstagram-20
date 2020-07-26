@@ -20,10 +20,10 @@ window.formValidation = (function () {
   var MAX_DESCRIPTION_LENGTH = 140; // --- Максимальная длина описания фотографии (в символах)
 
   // ********* DOM-элементы *********
-  var FORM_UPLOAD_IMAGE = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
-  var IMAGE_EDITING_FORM = FORM_UPLOAD_IMAGE.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
-  var FIELD_FOR_HASHTAGS = IMAGE_EDITING_FORM.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
-  var FIELD_FOR_DESCRIPTION = IMAGE_EDITING_FORM.querySelector('.text__description'); // --- Поле для описания фотографии
+  var formUploadImage = document.querySelector('#upload-select-image'); // --- Форма загрузки и редактирования изображения
+  var imageEditingForm = formUploadImage.querySelector('.img-upload__overlay'); // --- Окно редактирования изображения
+  var fieldForHashtags = imageEditingForm.querySelector('.text__hashtags'); // --- Поле для ввода Хештегов
+  var fieldForDescription = imageEditingForm.querySelector('.text__description'); // --- Поле для описания фотографии
 
 
   /*
@@ -48,10 +48,10 @@ window.formValidation = (function () {
   return {
     checkHashtagField: function () {
       var regExpForHashtag = /^#[\wа-яА-Я]*$/; // --- Паттерн для валидации Хештегов
-      var notEmptyHashtagField = FIELD_FOR_HASHTAGS.value !== window.util.ATTRIBUTE_EMPTY_VALUE; // --- НЕ пустое поле для хештегов
+      var notEmptyHashtagField = fieldForHashtags.value !== window.util.ATTRIBUTE_EMPTY_VALUE; // --- НЕ пустое поле для хештегов
 
       // --- Массив — набор хештегов из поля ввода ---
-      var hashtags = FIELD_FOR_HASHTAGS.value.split(SEPARATOR);
+      var hashtags = fieldForHashtags.value.split(SEPARATOR);
 
       // *** Цикл для валидации Хештегов ***
       for (var i = 0; i < hashtags.length; i++) {
@@ -86,22 +86,22 @@ window.formValidation = (function () {
 
         // --- Правила валидации набора хештегов ---
         if (error.patternMismatch && notEmptyHashtagField) {
-          validationError.add(FIELD_FOR_HASHTAGS, message.patternMismatch);
+          validationError.add(fieldForHashtags, message.patternMismatch);
           break;
         } else if (error.tooManyHashtags) {
-          validationError.add(FIELD_FOR_HASHTAGS, message.tooManyHashtags);
+          validationError.add(fieldForHashtags, message.tooManyHashtags);
           break;
         } else if (error.loneHash) {
-          validationError.add(FIELD_FOR_HASHTAGS, message.loneHash);
+          validationError.add(fieldForHashtags, message.loneHash);
           break;
         } else if (error.tooLongHashtag) {
-          validationError.add(FIELD_FOR_HASHTAGS, message.tooLongHashtag);
+          validationError.add(fieldForHashtags, message.tooLongHashtag);
           break;
         } else if (error.duplicateHashtags) {
-          validationError.add(FIELD_FOR_HASHTAGS, message.duplicateHashtags);
+          validationError.add(fieldForHashtags, message.duplicateHashtags);
           break;
         } else {
-          validationError.remove(FIELD_FOR_HASHTAGS);
+          validationError.remove(fieldForHashtags);
         }
       }
 
@@ -117,11 +117,11 @@ window.formValidation = (function () {
 
     checkTextArea: function () {
       var descriptionError = {
-        tooManySymbols: FIELD_FOR_DESCRIPTION.value.length > MAX_DESCRIPTION_LENGTH
+        tooManySymbols: fieldForDescription.value.length > MAX_DESCRIPTION_LENGTH
       };
 
       var descriptionErrorMessage = {
-        tooManySymbols: 'Количество символов описания фотографии не должно превышать ' + MAX_DESCRIPTION_LENGTH + ' символов! Количество символов сейчас: ' + FIELD_FOR_DESCRIPTION.value.length
+        tooManySymbols: 'Количество символов описания фотографии не должно превышать ' + MAX_DESCRIPTION_LENGTH + ' символов! Количество символов сейчас: ' + fieldForDescription.value.length
       };
 
 
@@ -129,10 +129,10 @@ window.formValidation = (function () {
       switch (true) {
         // --- Слишком длинное описание (количество символов не должно превышать 140) ---
         case descriptionError.tooManySymbols:
-          return validationError.add(FIELD_FOR_DESCRIPTION, descriptionErrorMessage.tooManySymbols);
+          return validationError.add(fieldForDescription, descriptionErrorMessage.tooManySymbols);
 
         default:
-          return validationError.remove(FIELD_FOR_DESCRIPTION);
+          return validationError.remove(fieldForDescription);
       }
     },
 

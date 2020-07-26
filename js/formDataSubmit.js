@@ -14,17 +14,17 @@ window.formDataSubmit = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* DOM-элементы *********
-  var MAIN = document.querySelector('main');
-  var SUCCESS_WINDOW = document.querySelector('#success').content.querySelector('.success');
-  var ERROR_WINDOW = document.querySelector('#error').content.querySelector('.error');
+  var main = document.querySelector('main');
+  var successWindow = document.querySelector('#success').content.querySelector('.success');
+  var errorWindow = document.querySelector('#error').content.querySelector('.error');
 
 
   // *** Переменные, содержащие элементы модальных окон ***
-  var successModal = SUCCESS_WINDOW.cloneNode(true);
+  var successModal = successWindow.cloneNode(true);
   var successModalInner = successModal.querySelector('.success__inner');
   var successCloseButton = successModalInner.querySelector('.success__button');
 
-  var errorModal = ERROR_WINDOW.cloneNode(true);
+  var errorModal = errorWindow.cloneNode(true);
   var errorModalInner = errorModal.querySelector('.error__inner');
   var errorCloseButton = errorModalInner.querySelector('.error__button');
 
@@ -40,7 +40,7 @@ window.formDataSubmit = (function () {
   var successDialog = {
     open: function () {
       window.imageEditingForm.close();
-      MAIN.appendChild(successModal);
+      main.appendChild(successModal);
 
       // === ДОБАВЛЕНИЕ обработчиков событий закрытия окна ===
       successCloseButton.addEventListener('click', onSuccessModalClose);
@@ -49,7 +49,7 @@ window.formDataSubmit = (function () {
     },
 
     close: function () {
-      MAIN.removeChild(successModal);
+      main.removeChild(successModal);
 
       // === УДАЛЕНИЕ обработчиков событий закрытия окна ===
       successCloseButton.removeEventListener('click', onSuccessModalClose);
@@ -63,7 +63,7 @@ window.formDataSubmit = (function () {
   var errorDialog = {
     open: function () {
       window.imageEditingForm.close();
-      MAIN.appendChild(errorModal);
+      main.appendChild(errorModal);
 
       // === ДОБАВЛЕНИЕ обработчиков событий закрытия окна ===
       errorCloseButton.addEventListener('click', onErrorModalClose);
@@ -72,7 +72,7 @@ window.formDataSubmit = (function () {
     },
 
     close: function () {
-      MAIN.removeChild(errorModal);
+      main.removeChild(errorModal);
 
       // === УДАЛЕНИЕ обработчиков событий закрытия окна ===
       errorCloseButton.removeEventListener('click', onErrorModalClose);

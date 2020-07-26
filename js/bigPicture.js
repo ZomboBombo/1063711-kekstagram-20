@@ -18,17 +18,17 @@ window.bigPicture = (function () {
   var SHIFT = 1; // --- Сдвиг ( для выбора нужного элемента массива )
 
   // ********* DOM-элементы *********
-  var BODY = document.querySelector('body'); // --- DOM-элемент для <body>
+  var body = document.querySelector('body'); // --- DOM-элемент для <body>
 
-  var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
+  var picturesContainer = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
 
-  var BIG_PICTURE_CONTAINER = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
-  var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
-  var BIG_PICTURE_CLOSE = BIG_PICTURE.querySelector('.big-picture__cancel'); // --- Кнопка закрытия полноразмерной фотографии
+  var bigPictureContainer = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
+  var bigPicture = bigPictureContainer.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
+  var bigPictureClose = bigPicture.querySelector('.big-picture__cancel'); // --- Кнопка закрытия полноразмерной фотографии
 
-  var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
-  var commentsCurrentCount = COMMENTS_COUNT.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
-  var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
+  var commentsCount = bigPicture.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
+  var commentsCurrentCount = commentsCount.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
+  var commentsLoader = bigPicture.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
 
 
   // *** Функция обработки события клика на кнпку загрузки дополнительных комментариев ---
@@ -65,13 +65,13 @@ window.bigPicture = (function () {
 
       window.fullsizePicture.open(window.backend.dataArray[numberOfJSObject - SHIFT]); // --- Получение полноразмерного изображения
 
-      BIG_PICTURE_CONTAINER.classList.remove('hidden'); // --- Открытие полноразмерного изображения
-      BODY.classList.add('modal-open'); // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне
+      bigPictureContainer.classList.remove('hidden'); // --- Открытие полноразмерного изображения
+      body.classList.add('modal-open'); // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне
 
       commentsCurrentCount.textContent = window.fullsizePicture.getAvailableCommentsCount();
 
       // ====== ДОБАВЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ ======
-      BIG_PICTURE_CLOSE.addEventListener('click', onClose);
+      bigPictureClose.addEventListener('click', onClose);
       document.addEventListener('keydown', onEscPress);
     }
   };
@@ -79,21 +79,21 @@ window.bigPicture = (function () {
   // *** Функция для обработчика события ЗАКРЫТИЯ полноразмерного изображения ***
   var onClose = function () {
     // --- Сокрытие полноразмерного изображения ---
-    BIG_PICTURE_CONTAINER.classList.add('hidden');
+    bigPictureContainer.classList.add('hidden');
 
     // --- Удаление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
-    BODY.classList.remove('modal-open');
+    body.classList.remove('modal-open');
 
     commentsCurrentCount.textContent = window.util.ZERO;
 
     // ====== УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ ======
-    BIG_PICTURE_CLOSE.removeEventListener('click', onClose);
-    COMMENTS_LOADER.removeEventListener('click', onCommentsLoaderClick);
+    bigPictureClose.removeEventListener('click', onClose);
+    commentsLoader.removeEventListener('click', onCommentsLoaderClick);
     document.removeEventListener('keydown', onEscPress);
   };
 
 
   // *** Добавление обработчика события для показа Полноразмерной фотографии ***
-  PICTURES_CONTAINER.addEventListener('click', onOpen);
+  picturesContainer.addEventListener('click', onOpen);
 
 })();

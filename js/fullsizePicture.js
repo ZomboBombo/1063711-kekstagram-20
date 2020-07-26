@@ -17,14 +17,14 @@ window.fullsizePicture = (function () {
   var FIVE_COMMENTS = 5;
 
   // ********* DOM-элементы *********
-  var BIG_PICTURE_CONTAINER = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
-  var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
+  var bigPictureContainer = document.querySelector('.big-picture'); // --- Контейнер для полноразмерной фотографии
+  var bigPicture = bigPictureContainer.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
 
-  var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Список комментариев
-  var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
-  var commentsCurrentCount = COMMENTS_COUNT.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
-  var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
-  var COMMENT_TEMPLATE = COMMENTS.querySelector('.social__comment'); // --- Шаблон комментария
+  var comments = bigPicture.querySelector('.social__comments'); // --- Список комментариев
+  var commentsCount = bigPicture.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
+  var commentsCurrentCount = commentsCount.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
+  var commentsLoader = bigPicture.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
+  var commentTemplate = comments.querySelector('.social__comment'); // --- Шаблон комментария
 
 
   // --- Пустая переменная для списка комментариев к каждой фотографии ---
@@ -69,9 +69,9 @@ window.fullsizePicture = (function () {
         comment.hide(listOfComments[i]);
       }
 
-      COMMENTS_LOADER.classList.remove('hidden');
+      commentsLoader.classList.remove('hidden');
     } else {
-      COMMENTS_LOADER.classList.add('hidden');
+      commentsLoader.classList.add('hidden');
     }
   };
 
@@ -112,7 +112,7 @@ window.fullsizePicture = (function () {
         comment.show(element);
       });
 
-      COMMENTS_LOADER.classList.add('hidden');
+      commentsLoader.classList.add('hidden');
     }
 
     commentsCurrentCount.textContent = getAvailableCommentsCount();
@@ -122,7 +122,7 @@ window.fullsizePicture = (function () {
   // *** Функция для наполнения полноразмерного изображения ***
   var getFullsizePicture = function (smallPicture) {
     // --- Превью полноразмерной фотографии ---
-    var fullsizePicture = BIG_PICTURE;
+    var fullsizePicture = bigPicture;
 
     // --- Заполнение полей превью данными из массива ---
     fullsizePicture.querySelector('.big-picture__img').querySelector('img').src = smallPicture.url;
@@ -131,28 +131,28 @@ window.fullsizePicture = (function () {
     fullsizePicture.querySelector('.comments-count').textContent = smallPicture.comments.length;
 
     // --- Очистка списка комментариев ---
-    COMMENTS.innerHTML = '';
+    comments.innerHTML = '';
 
     // --- Заполнение полей комментариев данными ---
     for (var i = 0; i < smallPicture.comments.length; i++) {
-      var commentElement = COMMENT_TEMPLATE.cloneNode(true);
+      var commentElement = commentTemplate.cloneNode(true);
 
       commentElement.querySelector('.social__picture').src = smallPicture.comments[i].avatar;
       commentElement.querySelector('.social__picture').alt = smallPicture.comments[i].name;
       commentElement.querySelector('.social__text').textContent = smallPicture.comments[i].message;
 
-      COMMENTS.appendChild(commentElement);
+      comments.appendChild(commentElement);
     }
 
     // --- Сформированный список комментариев ---
-    commentsList = COMMENTS.querySelectorAll('.social__comment');
+    commentsList = comments.querySelectorAll('.social__comment');
 
     // --- Ограничение показываемых комментариев ---
     showAvailableComments(commentsList);
 
 
     // *** Обработчик события клика по кнопке загрузки дополнительных комментариев ***
-    COMMENTS_LOADER.addEventListener('click', onCommentsLoaderClick);
+    commentsLoader.addEventListener('click', onCommentsLoaderClick);
 
 
     return fullsizePicture;

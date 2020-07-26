@@ -17,14 +17,14 @@ window.filter = (function () {
   var TEN_PHOTOS = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
 
   // ********* DOM-элементы *********
-  var IMAGE_FILTERS_SECTION = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
-  var IMAGE_FILTER_BUTTONS = IMAGE_FILTERS_SECTION.querySelectorAll('.img-filters__button'); // --- Коллекция кнопок для фильтров
+  var imageFiltersSection = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
+  var imageFilterButtons = imageFiltersSection.querySelectorAll('.img-filters__button'); // --- Коллекция кнопок для фильтров
 
   // *** Фильтры для сортировки фотографий ***
   var Filter = {
-    DEFAULT: IMAGE_FILTERS_SECTION.querySelector('#filter-default'), // --- Фильтр «По умолчанию»
-    RANDOM: IMAGE_FILTERS_SECTION.querySelector('#filter-random'), // --- Фильтр «Случайные»
-    DISCUSSED: IMAGE_FILTERS_SECTION.querySelector('#filter-discussed') // --- Фильтр «Обсуждаемые»
+    DEFAULT: imageFiltersSection.querySelector('#filter-default'), // --- Фильтр «По умолчанию»
+    RANDOM: imageFiltersSection.querySelector('#filter-random'), // --- Фильтр «Случайные»
+    DISCUSSED: imageFiltersSection.querySelector('#filter-discussed') // --- Фильтр «Обсуждаемые»
   };
 
 
@@ -93,7 +93,7 @@ window.filter = (function () {
   // *** Функция для управления списком классов кнопок для фильтров ***
   var manageClassList = function (filter) {
     // --- Проход по списку кнопок для фильтров и удаление класса "активности" фильтра ---
-    Array.from(IMAGE_FILTER_BUTTONS).forEach(function (element) {
+    Array.from(imageFilterButtons).forEach(function (element) {
       element.classList.remove('img-filters__button--active');
     });
 

@@ -14,11 +14,11 @@ window.renderImage = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* DOM-элементы *********
-  var PICTURE_TEMPLATE = document.querySelector('#picture') // --- Шаблон для вставки фотографий
+  var pictureTemplate = document.querySelector('#picture') // --- Шаблон для вставки фотографий
                       .content
                       .querySelector('.picture');
 
-  var PICTURES_CONTAINER = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
+  var picturesContainer = document.querySelector('.pictures'); // --- Блок для отрисовки фотографий на страницу
 
 
   /*
@@ -32,7 +32,7 @@ window.renderImage = (function () {
   */
   // --- Функция для наполнения шаблона для Фото данными из массива ---
   var getARenderedPicture = function (photoCard) {
-    var renderedPicture = PICTURE_TEMPLATE.cloneNode(true); // --- Клонирование шаблона для фотографий
+    var renderedPicture = pictureTemplate.cloneNode(true); // --- Клонирование шаблона для фотографий
 
     // --- Заполнение шаблона данными от элементов массива ---
     renderedPicture.querySelector('.picture__img').src = photoCard.url;
@@ -45,7 +45,7 @@ window.renderImage = (function () {
 
   return function (images) {
     // --- Коллекция пользовательских изображений ---
-    var userPictures = PICTURES_CONTAINER.querySelectorAll('.picture'); // --- Пользовательские изображения
+    var userPictures = picturesContainer.querySelectorAll('.picture'); // --- Пользовательские изображения
 
     // --- Удаление "старых" пользовательских фотографий ---
     userPictures.forEach(function (element) {
@@ -54,7 +54,7 @@ window.renderImage = (function () {
 
     // --- Наполнение DOM-элемента данными ---
     for (var i = 0; i < images.length; i++) {
-      PICTURES_CONTAINER.appendChild(getARenderedPicture(images[i]));
+      picturesContainer.appendChild(getARenderedPicture(images[i]));
     }
   };
 
