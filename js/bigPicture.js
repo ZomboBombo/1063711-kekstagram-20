@@ -26,6 +26,13 @@ window.bigPicture = (function () {
   var BIG_PICTURE = BIG_PICTURE_CONTAINER.querySelector('.big-picture__preview'); // --- Шаблон для полноразмерной фотографии
   var BIG_PICTURE_CLOSE = BIG_PICTURE.querySelector('.big-picture__cancel'); // --- Кнопка закрытия полноразмерной фотографии
 
+  var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
+  var commentsCurrentCount = COMMENTS_COUNT.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
+  var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
+
+
+  // *** Функция обработки события клика на кнпку загрузки дополнительных комментариев ---
+  var onCommentsLoaderClick = window.fullsizePicture.onCommentsLoaderClick;
 
   /*
   ----------------------------------------------------------------------------------
@@ -61,6 +68,7 @@ window.bigPicture = (function () {
       BIG_PICTURE_CONTAINER.classList.remove('hidden'); // --- Открытие полноразмерного изображения
       BODY.classList.add('modal-open'); // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне
 
+      commentsCurrentCount.textContent = window.fullsizePicture.getAvailableCommentsCount();
 
       // ====== ДОБАВЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ ======
       BIG_PICTURE_CLOSE.addEventListener('click', onClose);
@@ -76,8 +84,11 @@ window.bigPicture = (function () {
     // --- Удаление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
     BODY.classList.remove('modal-open');
 
+    commentsCurrentCount.textContent = window.util.ZERO;
+
     // ====== УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ ======
     BIG_PICTURE_CLOSE.removeEventListener('click', onClose);
+    COMMENTS_LOADER.removeEventListener('click', onCommentsLoaderClick);
     document.removeEventListener('keydown', onEscPress);
   };
 
