@@ -14,18 +14,17 @@ window.filter = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* КОНСТАНТЫ *********
-  var ZERO = 0; // --- Нулевой элемент
-  var TEN_PHOTO = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
+  var TEN_PHOTOS = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
 
   // ********* DOM-элементы *********
-  var IMAGE_FILTERS_SECTION = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
-  var IMAGE_FILTER_BUTTONS = IMAGE_FILTERS_SECTION.querySelectorAll('.img-filters__button'); // --- Коллекция кнопок для фильтров
+  var imageFiltersSection = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
+  var imageFilterButtons = imageFiltersSection.querySelectorAll('.img-filters__button'); // --- Коллекция кнопок для фильтров
 
   // *** Фильтры для сортировки фотографий ***
   var Filter = {
-    DEFAULT: IMAGE_FILTERS_SECTION.querySelector('#filter-default'), // --- Фильтр «По умолчанию»
-    RANDOM: IMAGE_FILTERS_SECTION.querySelector('#filter-random'), // --- Фильтр «Случайные»
-    DISCUSSED: IMAGE_FILTERS_SECTION.querySelector('#filter-discussed') // --- Фильтр «Обсуждаемые»
+    DEFAULT: imageFiltersSection.querySelector('#filter-default'), // --- Фильтр «По умолчанию»
+    RANDOM: imageFiltersSection.querySelector('#filter-random'), // --- Фильтр «Случайные»
+    DISCUSSED: imageFiltersSection.querySelector('#filter-discussed') // --- Фильтр «Обсуждаемые»
   };
 
 
@@ -44,31 +43,27 @@ window.filter = (function () {
 
 
   // *** Функция получения 10-ти рандомных фотографий ***
-  var getTenRandomPhoto = function (sourceArray) {
+  var getTenRandomPhotos = function (sourceArray) {
     // --- Пустой массив для 10-ти рандомных фото ---
-    var tenRandomPhoto = [];
+    var tenRandomPhotos = [];
 
     // --- Копия данных, полученных с сервера ---
     var copyOfSourceArray = sourceArray.slice();
 
-    for (var i = 0; i < TEN_PHOTO; i++) {
-      // --- Номер случайной фотографии ---
-      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO_ELEMENT, copyOfSourceArray.length);
+    for (var i = 0; i < TEN_PHOTOS; i++) {
+      var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length); // --- Номер случайной фотографии
 
-      // --- Запись случайной фотографии в массив ---
-      tenRandomPhoto[i] = copyOfSourceArray[randomPhotoNumber];
+      tenRandomPhotos[i] = copyOfSourceArray[randomPhotoNumber]; // --- Запись случайной фотографии в массив
 
-      // --- Удаление "использованных" фотографий из массива ---
-      copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT);
+      copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT); // --- Удаление "использованных" фотографий из массива
     }
 
-
-    return tenRandomPhoto;
+    return tenRandomPhotos;
   };
 
 
   // *** Функция для сравнения двух элементов между собой ( для сортировки элементов по убыванию ) ***
-  var likesComparator = function (left, right) {
+  var compareLikesCount = function (left, right) {
     return right - left;
   };
 
@@ -82,8 +77,8 @@ window.filter = (function () {
     return copyOfSourceArray.sort(function (left, right) {
       var commentsLengthDifference = right.comments.length - left.comments.length;
 
-      if (commentsLengthDifference === ZERO) {
-        commentsLengthDifference = likesComparator(left.likes, right.likes);
+      if (commentsLengthDifference === window.util.ZERO) {
+        commentsLengthDifference = compareLikesCount(left.likes, right.likes);
       }
 
       return commentsLengthDifference;
@@ -92,9 +87,9 @@ window.filter = (function () {
 
 
   // *** Функция для управления списком классов кнопок для фильтров ***
-  var classListManager = function (filter) {
+  var manageClassList = function (filter) {
     // --- Проход по списку кнопок для фильтров и удаление класса "активности" фильтра ---
-    Array.from(IMAGE_FILTER_BUTTONS).forEach(function (element) {
+    Array.from(imageFilterButtons).forEach(function (element) {
       element.classList.remove('img-filters__button--active');
     });
 
@@ -105,19 +100,19 @@ window.filter = (function () {
 
   // *** Функция для обработчика события включения фильтра «По умолчанию» ***
   var onDefaultFilter = function () {
-    classListManager(Filter.DEFAULT);
+    manageClassList(Filter.DEFAULT);
     changeFilter.onDefault();
   };
 
   // *** Функция для обработчика события включения фильтра «Случайные» ***
   var onRandomFilter = function () {
-    classListManager(Filter.RANDOM);
+    manageClassList(Filter.RANDOM);
     changeFilter.onRandom();
   };
 
   // *** Функция для обработчика события включения фильтра «Обсуждаемые» ***
   var onDiscussedFilter = function () {
-    classListManager(Filter.DISCUSSED);
+    manageClassList(Filter.DISCUSSED);
     changeFilter.onDiscussed();
   };
 
@@ -148,7 +143,7 @@ window.filter = (function () {
     change: changeFilter,
 
     // *** Функции для фильтров «Случайные» и «Обсуждаемые» соответственно ***
-    getTenRandomPhoto: getTenRandomPhoto,
+    getTenRandomPhotos: getTenRandomPhotos,
     getDiscussedPhotos: getDiscussedPhotos
   };
 

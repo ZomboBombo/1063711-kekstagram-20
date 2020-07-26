@@ -29,7 +29,7 @@ window.backend = (function () {
 
 
   // --- Функция обработки статуса запроса и предупреждения о возможных ошибках ---
-  var requestStatus = function (request, success, err, url) {
+  var findOutRequestStatus = function (request, success, err, url) {
     var errorMessage;
 
     switch (request.status) {
@@ -62,8 +62,7 @@ window.backend = (function () {
 
 
   // --- Пустой массив для хранения элементов из объекта данных с сервера ---
-  var xhrResponseArray = [];
-
+  var xhrResponseElements = [];
 
   return {
     /*
@@ -79,13 +78,13 @@ window.backend = (function () {
       // *** ОБРАБОТКА СОБЫТИЙ ***
       // --- Обработчик события полуения ответа от сервера ---
       xhr.addEventListener('load', function () {
-        requestStatus(xhr, onLoad, onError, URL_FOR_GET);
-
+        findOutRequestStatus(xhr, onLoad, onError, URL_FOR_GET);
 
         // --- Заполнение массива элементами из объекта данных с сервера ---
-        for (var i = 0; i < xhr.response.length; i++) {
-          xhrResponseArray[i] = xhr.response[i];
-        }
+        Array.from(xhr.response).forEach(function (element, i) {
+          xhrResponseElements[i] = element;
+        });
+
       });
 
 
@@ -121,7 +120,7 @@ window.backend = (function () {
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        requestStatus(xhr, onLoad, onError, URL_FOR_POST);
+        findOutRequestStatus(xhr, onLoad, onError, URL_FOR_POST);
       });
 
 
@@ -135,7 +134,7 @@ window.backend = (function () {
     --- Массив данных, полученных с сервера ---
     -------------------------------------------
     */
-    dataArray: xhrResponseArray
+    dataArray: xhrResponseElements
   };
 
 })();

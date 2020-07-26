@@ -14,7 +14,7 @@ window.gallery = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* DOM-элементы *********
-  var IMAGE_FILTERS_SECTION = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
+  var imageFiltersSection = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
 
 
   /*
@@ -36,7 +36,7 @@ window.gallery = (function () {
   };
 
   window.filter.change.onRandom = function () {
-    var tenRandomImagesData = window.filter.getTenRandomPhoto(imagesData);
+    var tenRandomImagesData = window.filter.getTenRandomPhotos(imagesData);
     updateImage(tenRandomImagesData);
   };
 
@@ -52,7 +52,7 @@ window.gallery = (function () {
     updateImage(imagesData);
 
     // --- Показ блока с фильтрами для отображения фотографий ---
-    IMAGE_FILTERS_SECTION.classList.remove('img-filters--inactive');
+    imageFiltersSection.classList.remove('img-filters--inactive');
   };
 
 

@@ -19,13 +19,13 @@ window.slider = (function () {
   var HUNDRED_PERCENT_VALUE = 100;
 
   // ********* DOM-элементы *********
-  var IMAGE_PREVIEW_CONTAINER = document.querySelector('.img-upload__preview-container'); // --- Контейнер для превью загруженного изображения в Форму редактирования
-  var IMAGE_EFFECT_LEVEL = IMAGE_PREVIEW_CONTAINER.querySelector('.img-upload__effect-level'); // --- Группа полей слайдера
+  var imagePreviewContainer = document.querySelector('.img-upload__preview-container'); // --- Контейнер для превью загруженного изображения в Форму редактирования
+  var imageEffectLevel = imagePreviewContainer.querySelector('.img-upload__effect-level'); // --- Группа полей слайдера
 
-  var EFFECT_LEVEL_VALUE = IMAGE_EFFECT_LEVEL.querySelector('.effect-level__value'); // --- <input> для отправки значения насыщенности фильтра на сервер
-  var EFFECT_LEVEL_LINE = IMAGE_EFFECT_LEVEL.querySelector('.effect-level__line'); // --- Полоска слайдера
-  var EFFECT_LEVEL_PIN = IMAGE_EFFECT_LEVEL.querySelector('.effect-level__pin'); // --- Ручка слайдера
-  var EFFECT_LEVEL_DEPTH = IMAGE_EFFECT_LEVEL.querySelector('.effect-level__depth'); // --- Элемент отображения насыщенности фильтра
+  var effectLevelValue = imageEffectLevel.querySelector('.effect-level__value'); // --- <input> для отправки значения насыщенности фильтра на сервер
+  var effectLevelLine = imageEffectLevel.querySelector('.effect-level__line'); // --- Полоска слайдера
+  var effectLevelPin = imageEffectLevel.querySelector('.effect-level__pin'); // --- Ручка слайдера
+  var effectLevelDepth = imageEffectLevel.querySelector('.effect-level__depth'); // --- Элемент отображения насыщенности фильтра
 
 
   /*
@@ -34,20 +34,20 @@ window.slider = (function () {
   ----------------------------------------------------------------------------------
   */
   // --- Установка верного начального значения для элементов слайдера ---
-  EFFECT_LEVEL_VALUE.setAttribute('value', HUNDRED_PERCENT_VALUE);
-  EFFECT_LEVEL_PIN.style.left = HUNDRED_PERCENT_VALUE + PERCENT_UNIT;
-  EFFECT_LEVEL_DEPTH.style.width = HUNDRED_PERCENT_VALUE + PERCENT_UNIT;
+  effectLevelValue.setAttribute('value', HUNDRED_PERCENT_VALUE);
+  effectLevelPin.style.left = HUNDRED_PERCENT_VALUE + PERCENT_UNIT;
+  effectLevelDepth.style.width = HUNDRED_PERCENT_VALUE + PERCENT_UNIT;
 
 
   // *** Обработчик события нажатия кнопки мыши ***
-  EFFECT_LEVEL_PIN.addEventListener('mousedown', function (evt) {
+  effectLevelPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
 
     // --- Границы полосы движения ползунка ---
     var Slider = {
-      minValue: EFFECT_LEVEL_LINE.clientLeft,
-      maxValue: EFFECT_LEVEL_LINE.clientWidth
+      minValue: effectLevelLine.clientLeft,
+      maxValue: effectLevelLine.clientWidth
     };
 
 
@@ -74,28 +74,28 @@ window.slider = (function () {
 
 
       // --- Перезапись стилевых параметров DOM-элементов ---
-      EFFECT_LEVEL_PIN.style.left = (EFFECT_LEVEL_PIN.offsetLeft - shift.x) + PIXEL_UNIT;
-      EFFECT_LEVEL_DEPTH.style.width = (EFFECT_LEVEL_PIN.offsetLeft - shift.x) + PIXEL_UNIT;
+      effectLevelPin.style.left = (effectLevelPin.offsetLeft - shift.x) + PIXEL_UNIT;
+      effectLevelDepth.style.width = (effectLevelPin.offsetLeft - shift.x) + PIXEL_UNIT;
 
 
       // --- Выделение целого числа из коррдинаты ---
-      var xCoordInteger = parseInt(EFFECT_LEVEL_PIN.style.left, window.util.NUMBER_SYSTEM);
+      var xCoordInteger = parseInt(effectLevelPin.style.left, window.util.NUMBER_SYSTEM);
 
 
       // --- Условия определения пределов движения ползунка ---
       if (xCoordInteger <= Slider.minValue) {
-        EFFECT_LEVEL_PIN.style.left = Slider.minValue + PIXEL_UNIT;
+        effectLevelPin.style.left = Slider.minValue + PIXEL_UNIT;
       } else if (xCoordInteger >= Slider.maxValue) {
-        EFFECT_LEVEL_PIN.style.left = Slider.maxValue + PIXEL_UNIT;
+        effectLevelPin.style.left = Slider.maxValue + PIXEL_UNIT;
       }
 
 
       // --- Процентное выражение значения насыщенности ---
-      var percentOfEffectValue = Math.floor(parseInt(EFFECT_LEVEL_PIN.style.left, window.util.NUMBER_SYSTEM) * HUNDRED_PERCENT_VALUE / Slider.maxValue);
+      var percentOfEffectValue = Math.floor(parseInt(effectLevelPin.style.left, window.util.NUMBER_SYSTEM) * HUNDRED_PERCENT_VALUE / Slider.maxValue);
 
 
       // --- Запись значения насыщенности в <input> для отправки на сервер ---
-      EFFECT_LEVEL_VALUE.setAttribute('value', percentOfEffectValue);
+      effectLevelValue.setAttribute('value', percentOfEffectValue);
 
 
       // --- Изменение насыщенности фильтра ---
@@ -120,8 +120,8 @@ window.slider = (function () {
 
   return {
     // --- Ссылки на DOM-элементы ---
-    EFFECT_LEVEL_PIN: EFFECT_LEVEL_PIN,
-    EFFECT_LEVEL_DEPTH: EFFECT_LEVEL_DEPTH
+    effectLevelPin: effectLevelPin,
+    effectLevelDepth: effectLevelDepth
   };
 
 })();
