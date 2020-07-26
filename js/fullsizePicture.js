@@ -22,8 +22,27 @@ window.fullsizePicture = (function () {
 
   var COMMENTS = BIG_PICTURE.querySelector('.social__comments'); // --- Список комментариев
   var COMMENTS_COUNT = BIG_PICTURE.querySelector('.social__comment-count'); // --- Блок, отображающий количество комментариев
+  var commentsCurrentCount = COMMENTS_COUNT.querySelector('.comments-current-count'); // --- Блок, отображающий количество комментариев
   var COMMENTS_LOADER = BIG_PICTURE.querySelector('.comments-loader'); // --- Кнопка загрузки дополнительных комментариев
   var COMMENT_TEMPLATE = COMMENTS.querySelector('.social__comment'); // --- Шаблон комментария
+
+
+  // --- Пустая переменная для списка комментариев к каждой фотографии ---
+  var commentsList;
+
+  // *** Функция получения числа доступных к просмотру комментариев ***
+  var getAvailableCommentsCount = function () {
+    commentsCurrentCount.textContent = 0;
+    var availableCommentsCount = parseInt(commentsCurrentCount.textContent, window.util.NUMBER_SYSTEM);
+
+    for (var i = 0; i < commentsList.length; i++) {
+      if (!commentsList[i].classList.contains('hidden')) {
+        availableCommentsCount++;
+      }
+    }
+
+    return availableCommentsCount;
+  };
 
 
   /*
@@ -31,10 +50,6 @@ window.fullsizePicture = (function () {
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
   ----------------------------------------------------------------------------------
   */
-  // --- Сокрытие блока, отображающего количество комментариев ---
-  COMMENTS_COUNT.classList.add('hidden');
-
-
   // *** Справочник методов комментариев ***
   var comment = {
     hide: function (commentElement) {
@@ -62,16 +77,16 @@ window.fullsizePicture = (function () {
 
 
   // *** Функция обработки события клика по кнопке загрузки дополнительных комментариев ***
-  var onCommentsLoaderClick = function (listOfComments) {
+  var onCommentsLoaderClick = function () {
     var hiddenComments = []; // --- Пустой массив для скрытых комментариев
 
+
     // --- Наполнение массива скрытыми комментариями ---
-    Array.from(listOfComments).forEach(function (element) {
+    Array.from(commentsList).forEach(function (element) {
       if (element.classList.contains('hidden')) {
         hiddenComments.push(element);
       }
     });
-
 
     /*
     _______________________________________________________
@@ -93,11 +108,14 @@ window.fullsizePicture = (function () {
         comment.show(hiddenComments[i]);
       }
     } else {
-      for (var j = 0; j < hiddenComments.length; j++) {
-        comment.show(hiddenComments[j]);
-        COMMENTS_LOADER.classList.add('hidden');
-      }
+      hiddenComments.forEach(function (element) {
+        comment.show(element);
+      });
+
+      COMMENTS_LOADER.classList.add('hidden');
     }
+
+    commentsCurrentCount.textContent = getAvailableCommentsCount();
   };
 
 
@@ -127,16 +145,14 @@ window.fullsizePicture = (function () {
     }
 
     // --- Сформированный список комментариев ---
-    var commentsList = COMMENTS.querySelectorAll('.social__comment');
+    commentsList = COMMENTS.querySelectorAll('.social__comment');
 
     // --- Ограничение показываемых комментариев ---
     availableCommentsList(commentsList);
 
 
     // *** Обработчик события клика по кнопке загрузки дополнительных комментариев ***
-    COMMENTS_LOADER.addEventListener('click', function () {
-      onCommentsLoaderClick(commentsList);
-    });
+    COMMENTS_LOADER.addEventListener('click', onCommentsLoaderClick);
 
 
     return fullsizePicture;
@@ -144,7 +160,9 @@ window.fullsizePicture = (function () {
 
 
   return {
-    open: getFullsizePicture
+    open: getFullsizePicture,
+    getAvailableCommentsCount: getAvailableCommentsCount,
+    onCommentsLoaderClick: onCommentsLoaderClick
   };
 
 })();
