@@ -63,7 +63,7 @@ window.fullsizePicture = (function () {
 
 
   // *** Функция для ограничения количества показываемых комментариев ***
-  var availableCommentsList = function (listOfComments) {
+  var showAvailableComments = function (listOfComments) {
     if (listOfComments.length >= FIVE_COMMENTS) {
       for (var i = FIVE_COMMENTS; i < listOfComments.length; i++) {
         comment.hide(listOfComments[i]);
@@ -148,7 +148,7 @@ window.fullsizePicture = (function () {
     commentsList = COMMENTS.querySelectorAll('.social__comment');
 
     // --- Ограничение показываемых комментариев ---
-    availableCommentsList(commentsList);
+    showAvailableComments(commentsList);
 
 
     // *** Обработчик события клика по кнопке загрузки дополнительных комментариев ***

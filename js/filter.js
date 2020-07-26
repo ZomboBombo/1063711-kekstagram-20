@@ -14,7 +14,7 @@ window.filter = (function () {
   ----------------------------------------------------------------------------------
   */
   // ********* КОНСТАНТЫ *********
-  var TEN_PHOTO = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
+  var TEN_PHOTOS = 10; // --- Количество отображаемых фотографий для фильтра «Случайные»
 
   // ********* DOM-элементы *********
   var IMAGE_FILTERS_SECTION = document.querySelector('.img-filters'); // --- Блок фильтров для отображения фотографий пользователей
@@ -45,29 +45,29 @@ window.filter = (function () {
   // *** Функция получения 10-ти рандомных фотографий ***
   var getTenRandomPhoto = function (sourceArray) {
     // --- Пустой массив для 10-ти рандомных фото ---
-    var tenRandomPhoto = [];
+    var tenRandomPhotos = [];
 
     // --- Копия данных, полученных с сервера ---
     var copyOfSourceArray = sourceArray.slice();
 
-    for (var i = 0; i < TEN_PHOTO; i++) {
+    for (var i = 0; i < TEN_PHOTOS; i++) {
       // --- Номер случайной фотографии ---
       var randomPhotoNumber = window.util.getRandomNumber(window.util.ZERO, copyOfSourceArray.length);
 
       // --- Запись случайной фотографии в массив ---
-      tenRandomPhoto[i] = copyOfSourceArray[randomPhotoNumber];
+      tenRandomPhotos[i] = copyOfSourceArray[randomPhotoNumber];
 
       // --- Удаление "использованных" фотографий из массива ---
       copyOfSourceArray.splice(randomPhotoNumber, window.util.DELETE_COUNT);
     }
 
 
-    return tenRandomPhoto;
+    return tenRandomPhotos;
   };
 
 
   // *** Функция для сравнения двух элементов между собой ( для сортировки элементов по убыванию ) ***
-  var likesComparator = function (left, right) {
+  var compareLikesCount = function (left, right) {
     return right - left;
   };
 
@@ -82,7 +82,7 @@ window.filter = (function () {
       var commentsLengthDifference = right.comments.length - left.comments.length;
 
       if (commentsLengthDifference === window.util.ZERO) {
-        commentsLengthDifference = likesComparator(left.likes, right.likes);
+        commentsLengthDifference = compareLikesCount(left.likes, right.likes);
       }
 
       return commentsLengthDifference;
@@ -91,7 +91,7 @@ window.filter = (function () {
 
 
   // *** Функция для управления списком классов кнопок для фильтров ***
-  var classListManager = function (filter) {
+  var manageClassList = function (filter) {
     // --- Проход по списку кнопок для фильтров и удаление класса "активности" фильтра ---
     Array.from(IMAGE_FILTER_BUTTONS).forEach(function (element) {
       element.classList.remove('img-filters__button--active');
@@ -104,19 +104,19 @@ window.filter = (function () {
 
   // *** Функция для обработчика события включения фильтра «По умолчанию» ***
   var onDefaultFilter = function () {
-    classListManager(Filter.DEFAULT);
+    manageClassList(Filter.DEFAULT);
     changeFilter.onDefault();
   };
 
   // *** Функция для обработчика события включения фильтра «Случайные» ***
   var onRandomFilter = function () {
-    classListManager(Filter.RANDOM);
+    manageClassList(Filter.RANDOM);
     changeFilter.onRandom();
   };
 
   // *** Функция для обработчика события включения фильтра «Обсуждаемые» ***
   var onDiscussedFilter = function () {
-    classListManager(Filter.DISCUSSED);
+    manageClassList(Filter.DISCUSSED);
     changeFilter.onDiscussed();
   };
 
