@@ -40,6 +40,15 @@ window.imageEditingForm = (function () {
   var FIELD_FOR_DESCRIPTION = IMAGE_EDITING_FORM.querySelector('.text__description'); // --- Поле для описания фотографии
 
 
+  //  *** Функции обработки событий изменения масштаба изображения ***
+  var onScaleDecrease = window.pictureScale.zoomOut;
+  var onScaleIncrease = window.pictureScale.zoomIn;
+
+  //  *** Функции обработки событий валидации полей Формы ***
+  var onHashtagsValidation = window.formValidation.checkHashtagField;
+  var onDescriptionValidation = window.formValidation.checkTextArea;
+
+
   /*
   ----------------------------------------------------------------------------------
   --------------------------------- ОСНОВНАЯ ЛОГИКА --------------------------------
@@ -97,15 +106,16 @@ window.imageEditingForm = (function () {
     IMAGE_EDITING_FORM.classList.remove('hidden');
     IMAGE_EFFECT_LEVEL.style.display = DISPLAY_NONE;
 
-    // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+    FIELD_FOR_HASHTAGS.focus();
+
     BODY.classList.add('modal-open');
 
     // ======= ОБРАБОТЧИКИ СОБЫТИЙ =======
-    FIELD_FOR_HASHTAGS.addEventListener('input', window.formValidation.hashtagField); // --- Валидация хештегов
-    FIELD_FOR_DESCRIPTION.addEventListener('input', window.formValidation.textArea); // --- Валидация поля для описания фотографии
+    FIELD_FOR_HASHTAGS.addEventListener('input', onHashtagsValidation); // --- Валидация хештегов
+    FIELD_FOR_DESCRIPTION.addEventListener('input', onDescriptionValidation); // --- Валидация поля для описания фотографии
 
-    SCALE_CONTROL_SMALLER.addEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
-    SCALE_CONTROL_BIGGER.addEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
+    SCALE_CONTROL_SMALLER.addEventListener('click', onScaleDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
+    SCALE_CONTROL_BIGGER.addEventListener('click', onScaleIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
 
     IMAGE_EDITING_FIELDSET_OF_EFFECTS.addEventListener('change', onEffectChange); // --- Обработчик события Наложения эффекта на изображение
 
@@ -120,15 +130,17 @@ window.imageEditingForm = (function () {
     IMAGE_EDITING_PREVIEW.style = window.util.ATTRIBUTE_EMPTY_VALUE;
     IMAGE_EDITING_PREVIEW.classList = window.util.ATTRIBUTE_EMPTY_VALUE;
 
-    // --- Добавление <body> класса для отключения прокрутки страницы при открытом модальном окне ---
+    window.formValidation.errorReport.remove(FIELD_FOR_HASHTAGS);
+    window.formValidation.errorReport.remove(FIELD_FOR_DESCRIPTION);
+
     BODY.classList.remove('modal-open');
 
     // ======= УДАЛЕНИЕ ОБРАБОТЧИКОВ СОБЫТИЙ =======
-    FIELD_FOR_HASHTAGS.removeEventListener('input', window.formValidation.hashtagField); // --- Валидация хештегов
-    FIELD_FOR_DESCRIPTION.removeEventListener('input', window.formValidation.textArea); // --- Валидация поля для описания фотографии
+    FIELD_FOR_HASHTAGS.removeEventListener('input', onHashtagsValidation); // --- Валидация хештегов
+    FIELD_FOR_DESCRIPTION.removeEventListener('input', onDescriptionValidation); // --- Валидация поля для описания фотографии
 
-    SCALE_CONTROL_SMALLER.removeEventListener('click', window.pictureScale.onDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
-    SCALE_CONTROL_BIGGER.removeEventListener('click', window.pictureScale.onIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
+    SCALE_CONTROL_SMALLER.removeEventListener('click', onScaleDecrease); // --- Обработчик события УМЕНЬШЕНИЯ масштаба
+    SCALE_CONTROL_BIGGER.removeEventListener('click', onScaleIncrease); // --- Обработчик события УВЕЛИЧЕНИЯ масштаба
 
     IMAGE_EDITING_FIELDSET_OF_EFFECTS.removeEventListener('change', onEffectChange); // --- Обработчик события Наложения эффекта на изображение
 
